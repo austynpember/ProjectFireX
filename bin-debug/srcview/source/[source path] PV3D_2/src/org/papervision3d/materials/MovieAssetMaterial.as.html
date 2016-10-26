@@ -1,0 +1,135 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>MovieAssetMaterial.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">materials</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">display</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MovieClip</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">display</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Sprite</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">utils</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">getDefinitionByName</span>;
+    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">log</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">PaperLogger</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">draw</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ITriangleDrawer</span>;
+
+
+    <span class="ActionScriptASDoc">/**
+    * The MovieAssetMaterial class creates a texture from a MovieClip library symbol.
+    * &lt;p/&gt;
+    * The texture can be animated and/or transparent.
+    * &lt;p/&gt;
+    * The MovieClip's content needs to be top left aligned with the registration point.
+    * &lt;p/&gt;
+    * Materials collects data about how objects appear when rendered.
+    */</span>
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">MovieAssetMaterial</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">MovieMaterial</span> <span class="ActionScriptReserved">implements</span> <span class="ActionScriptDefault_Text">ITriangleDrawer</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_library</span> :<span class="ActionScriptDefault_Text">Object</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Object</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_count</span>   :<span class="ActionScriptDefault_Text">Object</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Object</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        
+        <span class="ActionScriptASDoc">/**
+         * By default, a MovieAssetMaterial is stored and resused, but there are times where a user may want a unique copy.  set to true if you want a unique instance
+         * created
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">createUnique</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+        
+        <span class="ActionScriptASDoc">/**
+        * A texture object.
+        */</span>        
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">get</span> <span class="ActionScriptDefault_Text">texture</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Object</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">_texture</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptASDoc">/**
+        * @private
+        */</span>
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">set</span> <span class="ActionScriptDefault_Text">texture</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">asset</span>:<span class="ActionScriptDefault_Text">Object</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">asset</span> <span class="ActionScriptReserved">is</span> <span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptReserved">false</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">PaperLogger</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">error</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"Error: MovieAssetMaterial.texture requires a String to be passed to create the MovieClip reference from the library"</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptReserved">return</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptDefault_Text">movie</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">Sprite</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">createMovie</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">String</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">asset</span> <span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">bitmap</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">createBitmapFromSprite</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">movie</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">_texture</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">asset</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+
+        <span class="ActionScriptComment">// ______________________________________________________________________ NEW
+</span>
+        <span class="ActionScriptASDoc">/**
+        * The MovieAssetMaterial class creates a texture from a MovieClip library id.
+        *
+        * @param    linkageID            The linkage name of the MovieClip symbol in the library.
+        * @param    transparent            [optional] - If it's not transparent, the empty areas of the MovieClip will be of fill32 color. Default value is false.
+        */</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">MovieAssetMaterial</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">linkageID</span>:<span class="ActionScriptDefault_Text">String</span><span class="ActionScriptOperator">=</span><span class="ActionScriptString">""</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">transparent</span>:<span class="ActionScriptDefault_Text">Boolean</span><span class="ActionScriptOperator">=</span><span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">animated</span>:<span class="ActionScriptDefault_Text">Boolean</span><span class="ActionScriptOperator">=</span><span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">createUnique</span>:<span class="ActionScriptDefault_Text">Boolean</span><span class="ActionScriptOperator">=</span><span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">precise</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptBracket/Brace">)</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">movieTransparent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">transparent</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">animated</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">animated</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">createUnique</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">createUnique</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">precise</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">precise</span>;
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">linkageID</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span> <span class="ActionScriptOperator">&gt;</span> 0 <span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptDefault_Text">texture</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">linkageID</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+
+
+        <span class="ActionScriptComment">// ______________________________________________________________________ CREATE BITMAP
+</span>        
+        <span class="ActionScriptComment">/*
+        * since we need to pass a movieclip reference to MovieMaterial, I changed this method
+        * from createBitmap, to createMovie.  the super's constructor will take care of
+        * creating the actual bitmap reference
+        *  
+        */</span>
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">createMovie</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">asset</span>:<span class="ActionScriptOperator">*</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">MovieClip</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptComment">// Remove previous bitmap
+</span>            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">_texture</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptDefault_Text">asset</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">_count</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">_texture</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptOperator">--</span>;
+
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">prevMovie</span>:<span class="ActionScriptDefault_Text">MovieClip</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">_library</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">_texture</span><span class="ActionScriptBracket/Brace">]</span>;
+
+                <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">prevMovie</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">_count</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">_texture</span><span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">==</span> 0 <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptDefault_Text">_library</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">_texture</span><span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptComment">// Retrieve from library or...
+</span>            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">movie</span>:<span class="ActionScriptDefault_Text">MovieClip</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">_library</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">asset</span><span class="ActionScriptBracket/Brace">]</span>;
+            
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">MovieAsset</span>:<span class="ActionScriptDefault_Text">Class</span>;
+            
+            <span class="ActionScriptComment">// ...attachMovie
+</span>            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptOperator">!</span> <span class="ActionScriptDefault_Text">movie</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">MovieAsset</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getDefinitionByName</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">asset</span> <span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptReserved">as</span> <span class="ActionScriptDefault_Text">Class</span>;
+                <span class="ActionScriptDefault_Text">movie</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">MovieAsset</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">_library</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">asset</span><span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">movie</span>;
+                <span class="ActionScriptDefault_Text">_count</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">asset</span><span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">=</span> 0;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">else</span> <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">createUnique</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">MovieAsset</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getDefinitionByName</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">asset</span> <span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptReserved">as</span> <span class="ActionScriptDefault_Text">Class</span>;
+                <span class="ActionScriptDefault_Text">movie</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">MovieAsset</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">else</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">_count</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">asset</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptOperator">++</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+
+            <span class="ActionScriptComment">// Create Bitmap
+</span>            <span class="ActionScriptReserved">return</span>  <span class="ActionScriptDefault_Text">movie</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>

@@ -1,0 +1,45 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>IAnimatable.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">animation</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptinterface">interface</span> <span class="ActionScriptDefault_Text">IAnimatable</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptASDoc">/**
+         * Pauses the animation.
+         */</span> 
+        <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">pause</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>;
+        
+        <span class="ActionScriptASDoc">/**
+         * Plays the animation.
+         * 
+         * @param     clip    Clip to play. Default is "all"
+         * @param     loop    Whether the animation should loop. Default is true.
+         */</span> 
+        <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">play</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">clip</span>:<span class="ActionScriptDefault_Text">String</span><span class="ActionScriptOperator">=</span><span class="ActionScriptString">"all"</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">loop</span>:<span class="ActionScriptDefault_Text">Boolean</span><span class="ActionScriptOperator">=</span><span class="ActionScriptReserved">true</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>;
+        
+        <span class="ActionScriptASDoc">/**
+         * Resumes a paused animation.
+         * 
+         * @param loop     Whether the animation should loop. Defaults is true.
+         */</span> 
+        <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">resume</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">loop</span>:<span class="ActionScriptDefault_Text">Boolean</span><span class="ActionScriptOperator">=</span><span class="ActionScriptReserved">true</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>;
+        
+        <span class="ActionScriptASDoc">/**
+         * Stops the animation.
+         */</span> 
+        <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">stop</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>;
+        
+        <span class="ActionScriptASDoc">/**
+         * Whether the animation is playing. This property is read-only.
+         */</span>
+        <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">get</span> <span class="ActionScriptDefault_Text">playing</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span> : <span class="ActionScriptDefault_Text">Boolean</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>

@@ -1,0 +1,76 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Line3D.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderables</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    
+    
+     
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Lines3D</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">command</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">IRenderListItem</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">command</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">RenderLine</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">materials</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">special</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">LineMaterial</span>;
+
+    <span class="ActionScriptASDoc">/**
+     * 
+     * Line3D is used by Lines3D to store and render the lines. See Lines3D for a full explanation. 
+     * 
+     * @Author Ralph Hauwert
+     * @Author Andy Zupko
+     * @Author Seb Lee-Delisle
+       */</span>
+
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">Line3D</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">AbstractRenderable</span> <span class="ActionScriptReserved">implements</span> <span class="ActionScriptDefault_Text">IRenderable</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">v0</span>:<span class="ActionScriptDefault_Text">Vertex3D</span>;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">v1</span>:<span class="ActionScriptDefault_Text">Vertex3D</span>;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">cV</span>:<span class="ActionScriptDefault_Text">Vertex3D</span>;        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">material</span>:<span class="ActionScriptDefault_Text">LineMaterial</span>;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">renderCommand</span>:<span class="ActionScriptDefault_Text">RenderLine</span>;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">size</span>:<span class="ActionScriptDefault_Text">Number</span>;
+        <span class="ActionScriptASDoc">/**
+         * 
+         * @param instance        The containing Lines3D object
+         * @param material        The material for the line
+         * @param size            The line weight
+         * @param vertex0        The start vertex
+         * @param vertex1        The end vertex
+         * 
+         */</span>        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">Line3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">instance</span>:<span class="ActionScriptDefault_Text">Lines3D</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">material</span>:<span class="ActionScriptDefault_Text">LineMaterial</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">size</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">vertex0</span>:<span class="ActionScriptDefault_Text">Vertex3D</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">vertex1</span>:<span class="ActionScriptDefault_Text">Vertex3D</span><span class="ActionScriptBracket/Brace">)</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">size</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">size</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">material</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">material</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">v0</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">vertex0</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">v1</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">vertex1</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">cV</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">vertex1</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">instance</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">instance</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderCommand</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">RenderLine</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">this</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">addControlVertex</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">cx</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">cy</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">cz</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptBracket/Brace">)</span> :<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">cV</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Vertex3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">cx</span><span class="ActionScriptOperator">,</span><span class="ActionScriptDefault_Text">cy</span><span class="ActionScriptOperator">,</span><span class="ActionScriptDefault_Text">cz</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">instance</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geometry</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vertices</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">indexOf</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">cV</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptOperator">-</span>1<span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">instance</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geometry</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vertices</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">push</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">cV</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>        
+            <span class="ActionScriptDefault_Text">renderCommand</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">cV</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">cV</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vertex3DInstance</span>; 
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">getRenderListItem</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">IRenderListItem</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderCommand</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>

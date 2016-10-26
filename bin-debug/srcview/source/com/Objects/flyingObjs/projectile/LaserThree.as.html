@@ -1,0 +1,37 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>LaserThree.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">com</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Objects</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">flyingObjs</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">projectile</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">com</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Objects</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">flyingObjs</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">projectile</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">LaserTwo</span>;
+    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">math</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Number3D</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">objects</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DisplayObject3D</span>;
+    
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">LaserThree</span> 
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_laserLeft</span>:<span class="ActionScriptDefault_Text">LaserTwo</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_laserMiddle</span>:<span class="ActionScriptDefault_Text">LaserTwo</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_laserRight</span>:<span class="ActionScriptDefault_Text">LaserTwo</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_xVelLeft</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> -10;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_xVelMiddle</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_xVelRight</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 10;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">soundDelay1</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">soundDelay2</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 600;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">soundDelay3</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 1200;
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">LaserThree</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">startPos</span>:<span class="ActionScriptDefault_Text">Number3D</span><span class="ActionScriptOperator">,</span><span class="ActionScriptDefault_Text">container</span>:<span class="ActionScriptDefault_Text">DisplayObject3D</span><span class="ActionScriptBracket/Brace">)</span>
+        <span class="ActionScriptBracket/Brace">{</span>     
+            <span class="ActionScriptDefault_Text">_laserLeft</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">LaserTwo</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">startPos</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_xVelLeft</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">soundDelay1</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">_laserMiddle</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">LaserTwo</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">startPos</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_xVelMiddle</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">soundDelay2</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">_laserRight</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">LaserTwo</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">startPos</span><span class="ActionScriptOperator">,</span><span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_xVelRight</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">soundDelay3</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>

@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" 
+			   width="800" height="600" frameRate="30"
+			   xmlns:components="components.*"
+			   fontFamily="ArcadeClassicFalse" 
+			   creationComplete="init(event)" 
+			   remove="destroy(event)" 
+			   viewSourceURL="srcview/index.html">
+	
+	<fx:Style source="css/Global.css"/>
+	
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			
+			/**
+			 * @author Austyn Pember
+			 * @version 1.0
+			 */
+			import com.Constants;
+			import com.game.GameController;
+			
+			import events.*;
+			
+			import interfaces.*;
+			
+			import mods.*;
+			
+			import mx.controls.Menu;
+			
+			import spark.effects.Fade;
+			
+			//Setting up Controllers so that Modules can use them.
+			/** Menu for the Intro screen */
+			public var introMenu:Menu;
+			/** Menu for the Interface screen */
+			public var UIMenu:Menu;
+			/** Menu for the Options screen */
+			public var OptionsMenu:Menu; 
+			/** Number that gathers currentscore, then gets grabbed by either the HighScore or GameOver Module*/
+			public var moduleScoreTransferNumber:int;
+			/** String that might hold some information for the module that takes the modEvent*/
+			public var moduleTransferString:String;
+			
+			// Module
+			/** This is the Module that is currently being Loaded and used by PFX*/
+			[Bindable]
+			public var mod:String
+			
+			// Animation effects for the modules.
+			private var _fadeEffect1:Fade;
+			private var _fadeEffect2:Fade;
+			/**
+			 * Called on PFX creationComplete.  Instantiates the fade effect, sets the opening modue to IntroScreen, and sets up:
+			 * event listeners for the module calls -  Save/Load listeners  -  Pausing event listeners  -  MISC listeners.
+			 * @param event
+			 * @return
+			 */
+			protected function init(event:Event):void
+			{
+				// Set animation for the module moves, as well as setting the first module to the INTRO
+				setUpFade();
+				mod = "IntroScreen";
+				
+				//Setting up event listeners for the module calls
+				addEventListener(Constants.STARTGAME, switchMod, false, 0, true);
+				addEventListener(Constants.GOTOINTRO, switchMod, false, 0, true);
+				addEventListener(Constants.GOTOOPTIONS, switchMod, false, 0, true);
+				addEventListener(Constants.GOTOHIGHSCORE, switchMod, false, 0, true);
+				
+				// Save/Load listeners
+				addEventListener(Constants.SAVEGAME, saveGame, false, 0, true);
+				addEventListener(Constants.LOADGAME, loadGame, false, 0, true);
+				
+				// Pausing event listeners
+				addEventListener(Constants.PAUSETOGGLE, togglePause, false, 0, true);
+				addEventListener(Constants.PAUSEGAME, pauseGame, false, 0, true);
+				addEventListener(Constants.UNPAUSEGAME, unpauseGame, false, 0, true);
+				
+				// MISC listeners
+				addEventListener(Constants.DMG, updateHealth, false, 0, true);
+				addEventListener(Constants.SCORE, updateScore, false, 0, true);
+				addEventListener(Constants.ENEMYDMG, updateEnemyHealth, false, 0, true);
+				addEventListener(Constants.LEVEL, updateLevel, false, 0, true);
+				addEventListener(Constants.NUKE, updateNuke, false, 0, true);
+				addEventListener(Constants.CALCSCORE, calcScore, false, 0, true);
+				addEventListener(Constants.CALLSCORE, callScore, false, 0, true);
+				addEventListener(Constants.DEBUG, debug, false, 0, true);
+				addEventListener(Constants.CLEARBOSSHEALTH, clearBossHealth, false, 0, true);
+				addEventListener(Constants.PLAYFADE, fadeGame, false, 0, true);
+			}
+			/**
+			 * Called when PFX is closed, removes all Event Listeners.
+			 * @param event
+			 * @return
+			 */
+			protected function destroy(event:Event):void
+			{
+				// Remove all event listeners.
+				removeEventListener(Constants.STARTGAME, switchMod);
+				removeEventListener(Constants.GOTOINTRO, switchMod);
+				removeEventListener(Constants.GOTOOPTIONS, switchMod);
+				removeEventListener(Constants.GOTOHIGHSCORE, switchMod);
+				
+				removeEventListener(Constants.SAVEGAME, saveGame);
+				removeEventListener(Constants.LOADGAME, loadGame);
+				
+				removeEventListener(Constants.PAUSETOGGLE, togglePause);
+				removeEventListener(Constants.PAUSEGAME, pauseGame);
+				removeEventListener(Constants.UNPAUSEGAME, unpauseGame);
+				
+				removeEventListener(Constants.DMG, updateHealth);
+				removeEventListener(Constants.SCORE, updateScore);
+				removeEventListener(Constants.ENEMYDMG, updateEnemyHealth);
+				removeEventListener(Constants.LEVEL, updateLevel);
+				removeEventListener(Constants.NUKE, updateNuke);
+				removeEventListener(Constants.CALCSCORE, calcScore);
+				removeEventListener(Constants.CALLSCORE, callScore);
+				removeEventListener(Constants.DEBUG, debug);
+				removeEventListener(Constants.CLEARBOSSHEALTH, clearBossHealth);
+				removeEventListener(Constants.PLAYFADE, fadeGame);
+			}
+			/**
+			 * Creates a FadeEffect(1) that is played when the module gets changed in the loader. FadeEffect(2) will play on a level switchover.
+			 * @return
+			 */
+			private function setUpFade():void
+			{
+				_fadeEffect1 = new Fade();
+				_fadeEffect1.duration = 2000;
+				_fadeEffect1.alphaFrom = 0;
+				_fadeEffect1.alphaTo = 1;
+				
+				_fadeEffect2 = new Fade();
+				_fadeEffect2.duration = 5000;
+				_fadeEffect2.alphaFrom = 0;
+				_fadeEffect2.alphaTo = 1;
+			}
+			/**
+			 * Sets the current module. Changed mod which will change the mod that the Flex ModuleLoader is looking at.
+			 * @param event
+			 * @return
+			 */
+			public function switchMod(event:modEvent):void {   // Set current module
+				mod = event.modName;
+				if (event.string) moduleTransferString = event.string;
+			}
+			/**
+			 * Called on "ModuleLoader" "Ready" event, calls whatever animations are designed to run on ModuleChange.
+			 * @param event
+			 * @return
+			 */
+			private function animate(event:Event):void {	// Animate new Module
+				_fadeEffect1.play([Loader]);
+			}
+			/**
+			 * Fired down from InterfaceMenu... Will call a GameSave
+			 * @param event
+			 * @return
+			 */
+			private function saveGame(event:modEvent):void
+			{
+				trace("Game Saved");
+				GameController.saveGame();
+			}
+			/**
+			 * Fired down from a Menu... Will call a loadGame
+			 * @param event
+			 * @return
+			 */
+			private function loadGame(event:modEvent):void
+			{
+				trace("Game Loaded");
+			}
+			
+			
+			// ************* SPECIAL EVENTS ************ //
+			
+			/**
+			 * Called from inside a GameController that fires to the Interface.mxml
+			 * It is essenstially the connection from a deeper class to the damage/health structure. It is the specific damage of a collision (+/-). 
+			 * This ends up in the Health Component.
+			 * @param e
+			 * @return
+			 */
+			protected function updateHealth(e:DamageEvent):void {
+				// This is a function that gets called from inside a deeper class that calls to the Interface.mxml
+				// It is essenstially the connection from a deeper class to the damage/health structure.  It's parameter is
+				// an integer, which is the specific damage of a collision (+/-)
+				if (Loader.child != null) {
+					(Loader.child as IGameInterface).registerDamage(e.damage);
+				}
+			}
+			/**
+			 * Called from inside a GameController that fires to the Interface.mxml
+			 * It is essenstially the connection from a deeper class to the EnemyHealth component.  
+			 * It is the specific damage of a collision (+/-).
+			 * @param e
+			 * @return
+			 */
+			protected function updateEnemyHealth(e:EnemyDamageEvent):void {
+				if (Loader.child != null) {
+					(Loader.child as IGameInterface).damageBoss(e.damage);
+				}
+			}
+			/**
+			 * Called from inside a GameController that fires to the Interface.mxml
+			 * Is the specific point(s) of a an enemyKill (+/-)
+			 * @param e
+			 * @return
+			 */
+			protected function updateScore(e:ScoreEvent):void {
+				if (Loader.child != null) {
+					(Loader.child as IGameInterface).updateScore(e.score);
+				}
+			}
+			/**
+			 * Called from inside a GameController that fires to the Interface.mxml
+			 * It will update the visual label of the Current Level.
+			 * @param e
+			 * @return
+			 */
+			protected function updateLevel(e:LevelEvent):void {
+				if (Loader.child != null) {
+					(Loader.child as IGameInterface).updateLevel(e.level);
+				}
+				_fadeEffect2.play([Loader]);
+			}
+			/**
+			 * Called from inside a GameController that fires to the Interface.mxml
+			 * It will update the visual number of the Nuke Icons on the screen.
+			 * @param e
+			 * @return
+			 */ 
+			protected function updateNuke(e:NukeEvent):void {
+				if (Loader.child != null) {
+					(Loader.child as IGameInterface).updateNuke(e.Nuke);
+				}
+			}
+			/**
+			 * Called from an Interface, this takes the event.score (end score) number and stores it for the next module
+			 * (Highscore or Gameover) to use.
+			 * @param e
+			 * @return
+			 */
+			protected function calcScore(e:ScoreEvent):void {
+				// calcscore is called when Interface is destroyed, then the GameOver/Highscore screen calls the number when it is init.
+				moduleScoreTransferNumber = e.score;
+			}
+			/**
+			 * Called from HighScore Module, this takes the final score and GameEndType(you win!/gameover) and gives it to the requesting Module.
+			 * @param e
+			 * @return
+			 */
+			protected function callScore(e:Event):void {
+				if (Loader.child != null) {
+					(Loader.child as ScoreInterface).updateScoreAndString(moduleScoreTransferNumber,moduleTransferString); 
+				}
+			}
+			/**
+			 * Called from inside a GameController that fires to the Interface.mxml.  Used in Debug mode to hardclear BossHealth.
+			 * @return
+			 */
+			protected function clearBossHealth(e:Event):void {
+				trace("Clear Boss Health (Location : PFX)");
+				if (Loader.child != null) {
+					(Loader.child as IGameInterface).clearBossHealth();
+				}
+			}
+			
+			// ************ PAUSING **************** //
+			/**
+			 * This is a togglePause called from Interface. Switches the pause.
+			 * @param e
+			 * @return
+			 */
+			protected function togglePause(e:Event):void
+			{
+				// Whatever pause state the game is in, toggle it.
+				GameController.paused = !GameController.paused;
+			}
+			/**
+			 * This is a pause called from Interface.
+			 * @param e
+			 * @return
+			 */
+			protected function pauseGame(e:Event):void
+			{
+				GameController.paused = true;
+			}
+			/**
+			 * This is a UNpause called from Interface.
+			 * @param e
+			 * @return
+			 */
+			protected function unpauseGame(e:Event):void
+			{
+				GameController.paused = false;
+			}
+			
+			//***********// End Pausing //***********//
+		
+			protected function debug(e:Event):void {
+				GameController.debug = true;
+			}
+			
+			protected function fadeGame(e:Event):void {
+				_fadeEffect2.play([Loader]);
+			}
+		]]>
+	</fx:Script>
+	
+	<mx:ModuleLoader id="Loader" url="mods/{mod}.swf" width="100%" height="100%" ready="animate(event)" />
+
+</s:Application>

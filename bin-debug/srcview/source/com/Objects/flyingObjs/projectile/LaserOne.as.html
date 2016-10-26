@@ -1,0 +1,85 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>LaserOne.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">com</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Objects</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">flyingObjs</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">projectile</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">com</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Constants</span>;
+    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">media</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Sound</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">media</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">SoundTransform</span>;
+    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Particles</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderables</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Particle</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">math</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Number3D</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">materials</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">special</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">BitmapParticleMaterial</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">objects</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DisplayObject3D</span>;
+
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">LaserOne</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">Projectile</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptComment">// Star Bitmap
+</span>        <span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptMetadata">Embed </span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"/../assets/greenPart.png"</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">]</span>
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">BitmapGreen</span> : <span class="ActionScriptDefault_Text">Class</span>;
+        <span class="ActionScriptComment">// Info
+</span>        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_greenMat</span>:<span class="ActionScriptDefault_Text">BitmapParticleMaterial</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_bullet</span>:<span class="ActionScriptDefault_Text">Particle</span>;
+        
+        <span class="ActionScriptComment">// Movement
+</span>        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_xVel</span>:<span class="ActionScriptDefault_Text">int</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_zVel</span>:<span class="ActionScriptDefault_Text">int</span>;
+        
+        <span class="ActionScriptComment">//Sound    
+</span>        <span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptMetadata">Embed</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"assets/Sound/Weapons/Laser2_SFX.mp3"</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">]</span> 
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">soundAsset</span>:<span class="ActionScriptDefault_Text">Class</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">sound</span>:<span class="ActionScriptDefault_Text">Sound</span>;
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">LaserOne</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">startPos</span>:<span class="ActionScriptDefault_Text">Number3D</span><span class="ActionScriptOperator">,</span><span class="ActionScriptDefault_Text">container</span>:<span class="ActionScriptDefault_Text">DisplayObject3D</span><span class="ActionScriptBracket/Brace">)</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">super</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptComment">//Put this in the gameContainer
+</span>            <span class="ActionScriptDefault_Text">weaponType</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptString">"Laser One"</span>;
+            <span class="ActionScriptDefault_Text">_container</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">container</span>;
+            
+            <span class="ActionScriptDefault_Text">_greenMat</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">BitmapParticleMaterial</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">BitmapGreen</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">bitmapData</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">_bullet</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Particle</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_greenMat</span><span class="ActionScriptOperator">,</span>2<span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">_zVel</span> <span class="ActionScriptOperator">=</span> 10;
+            
+            <span class="ActionScriptComment">//Add a new Particles3D Container that Will hold the individual bullet sprites(particle)
+</span>            <span class="ActionScriptDefault_Text">particles3D</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Particles</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">particles3D</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">addParticle</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_bullet</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptComment">//Set the XYZ to the passed in StartingPositions
+</span>            <span class="ActionScriptDefault_Text">particles3D</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">position</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">startPos</span>;
+            <span class="ActionScriptDefault_Text">_container</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">addChild</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">particles3D</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptDefault_Text">startMoving</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">sound</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">soundAsset</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptReserved">as</span> <span class="ActionScriptDefault_Text">Sound</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">st</span>:<span class="ActionScriptDefault_Text">SoundTransform</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">SoundTransform</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">Constants</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">VOLUME</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">sound</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">play</span><span class="ActionScriptBracket/Brace">(</span>0<span class="ActionScriptOperator">,</span>0<span class="ActionScriptOperator">,</span><span class="ActionScriptDefault_Text">st</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">override</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">update</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">particles3D</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">z</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptDefault_Text">_zVel</span>;
+            
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">particles3D</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">z</span> <span class="ActionScriptOperator">&gt;</span> 780<span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptDefault_Text">destroy</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">override</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">destroy</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptComment">// Stop moving and clear the Interval
+</span>            <span class="ActionScriptDefault_Text">stopMoving</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">particles3D</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">removeAllParticles</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">_container</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">removeChild</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">particles3D</span><span class="ActionScriptBracket/Brace">)</span>; 
+            <span class="ActionScriptDefault_Text">_container</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">removeChild</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">this</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptComment">// Clear the ProjectileRegistry
+</span>            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">position</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">Projectile</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">registry</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">indexOf</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">,</span>0<span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">Projectile</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">registry</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">splice</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">position</span><span class="ActionScriptOperator">,</span>1<span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>

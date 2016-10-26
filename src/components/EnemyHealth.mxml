@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" visible="false"
+		 creationComplete="init(event)">
+	<fx:Script>
+		<![CDATA[
+			import com.Constants;
+			import com.game.GameController;
+			
+			import mx.core.BitmapAsset;
+			
+			[Embed(source="/../assets/HealthBar.png")]
+			[Bindable]
+			private var imgCls:Class;
+			
+			[Bindable]
+			private var _overlayWidth:Number = 0;
+			
+			private var _MAXWIDTH:Number;
+			private var _healthIncrement:Number;
+			private var _healthStepSize:Number;
+			
+			private function init(e:Event):void {
+				_MAXWIDTH = EnemyHealthImage.width;
+			}
+			/**
+			 * Update the visual width by a percentage.
+			 * @param dmg
+			 * @return
+			 */
+			public function updateHealth(dmg:int):void {
+			// If this HealthBar is not visual, make it visible by getting the current boss health and set it up.
+				if(!visible) {
+					_healthIncrement = _MAXWIDTH / findBossHealth();
+					_healthStepSize = (_healthIncrement) / 2;
+					visible = true;
+				}
+				_overlayWidth += _healthIncrement * dmg;
+				
+				//If healthlevel goes over (boss died) then make zero again and hide it.
+				if(_overlayWidth >= _MAXWIDTH - _healthStepSize) {
+					clearBossHealth();
+				}
+			}
+			/**
+			 * Set increment and width to zero.  Set invisible.
+			 * @param dmg
+			 * @return
+			 */
+			public function clearBossHealth():void {
+				_healthIncrement = 0;
+				_overlayWidth = 0;
+				visible = false;
+			}
+			
+			private function findBossHealth():int {
+				var bossHealth:Number;
+				
+				switch (GameController.currentLevel) {
+					case 1:
+						bossHealth = Constants.BOSS1HEALTH;
+						break;
+					
+					case 2:  
+						bossHealth = Constants.BOSS2HEALTH;
+						break;
+					
+					case 3:
+						bossHealth = Constants.BOSS3HEALTH;
+						break;
+					
+					case 4:
+						bossHealth = Constants.BOSS4HEALTH;
+						break;
+					
+					default:
+					trace(" No boss Health ");
+				}
+				return bossHealth;
+			}
+		]]>
+	</fx:Script>
+	<mx:Image id="EnemyHealthImage" source="{imgCls}"/>
+	<s:Rect radiusX="3" height="29" width="{_overlayWidth}" right="2" verticalCenter="0">
+		<s:fill>
+			<s:SolidColor color="0x000000"/>
+		</s:fill>
+	</s:Rect>
+</s:Group>

@@ -1,0 +1,125 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>DaeArray.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptComment">/*
+ * Copyright 2007 (c) Tim Knip, ascollada.org.
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */</span>
+ 
+<span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ascollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">types</span> <span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ascollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DaeDocument</span>;    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ascollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ASCollada</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ascollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DaeEntity</span>;    
+
+    <span class="ActionScriptASDoc">/**
+     * 
+     */</span>
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">DaeArray</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">DaeEntity</span>
+    <span class="ActionScriptBracket/Brace">{</span>    
+        <span class="ActionScriptASDoc">/** */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">values</span>:<span class="ActionScriptDefault_Text">Array</span>;
+        
+        <span class="ActionScriptASDoc">/** */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">count</span>:<span class="ActionScriptDefault_Text">int</span>;
+        
+        <span class="ActionScriptASDoc">/**
+         * 
+         * @param    node
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">DaeArray</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">document</span>:<span class="ActionScriptDefault_Text">DaeDocument</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">node</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">super</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">document</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">node</span> <span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * 
+         * @param    node
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">read</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">node</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>            
+            <span class="ActionScriptReserved">super</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">read</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">node</span> <span class="ActionScriptBracket/Brace">)</span>;
+
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">count</span> <span class="ActionScriptOperator">=</span> 0;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">values</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getData</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">node</span> <span class="ActionScriptBracket/Brace">)</span>;
+                        
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptOperator">!</span><span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">values</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptReserved">throw</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Error</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">" no data!"</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        
+        <span class="ActionScriptASDoc">/**
+         * 
+         * @param    node
+         * 
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">getData</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">node</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Array</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">children</span>:<span class="ActionScriptDefault_Text">XMLList</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">node</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">children</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">cnt</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">children</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptReserved">for</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">cnt</span>; <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">++</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">child</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">children</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>;
+                
+                <span class="ActionScriptReserved">switch</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">child</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">localName</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_BOOL_ARRAY_ELEMENT</span>:
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">count</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getAttributeAsInt</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_COUNT_ATTRIBUTE</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">getBools</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">child</span> <span class="ActionScriptBracket/Brace">)</span>;
+                        
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_INT_ARRAY_ELEMENT</span>:
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">count</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getAttributeAsInt</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_COUNT_ATTRIBUTE</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">getInts</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">child</span> <span class="ActionScriptBracket/Brace">)</span>;
+                        
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_IDREF_ARRAY_ELEMENT</span>:
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">count</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getAttributeAsInt</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_COUNT_ATTRIBUTE</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">getStrings</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">child</span> <span class="ActionScriptBracket/Brace">)</span>;
+                        
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_FLOAT_ARRAY_ELEMENT</span>:
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">count</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getAttributeAsInt</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_COUNT_ATTRIBUTE</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">getFloats</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">child</span> <span class="ActionScriptBracket/Brace">)</span>;
+                        
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_NAME_ARRAY_ELEMENT</span>:
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">count</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getAttributeAsInt</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_COUNT_ATTRIBUTE</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">getStrings</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">child</span> <span class="ActionScriptBracket/Brace">)</span>;
+                        
+                    <span class="ActionScriptReserved">default</span>:
+                        <span class="ActionScriptReserved">break</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">null</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptBracket/Brace">}</span>    
+<span class="ActionScriptBracket/Brace">}</span>
+</pre></body>
+</html>

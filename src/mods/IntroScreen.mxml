@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:mx="library://ns.adobe.com/flex/mx"
+		   layout="absolute"
+		   xmlns:components="components.*"
+		   creationComplete="init(event)" removedFromStage="destroy(event)"
+		   width="100%" height="100%" backgroundColor="0x000000"
+		   implements="interfaces.IntroInterface">
+
+	<fx:Metadata>
+		[Event(name=Constants.STARTGAME, type="events.modEvent")]
+	</fx:Metadata>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.Constants;
+			
+			import events.modEvent;
+			
+			import mx.controls.Image;
+			import mx.core.UIComponent;
+			
+			[Embed(source="/../assets/Help.png")] 
+			[Bindable]
+			private var imgCls:Class;
+			
+			public var initLoader:Loader;
+			public var initComp:UIComponent;
+			
+			private static var _helpText:Image;
+			private static var _doneButton:ButtonEx;
+			
+			protected function init(e:Event):void
+			{
+				// Create a new game loader that grabs the Intro swf
+				// When the load is complete, start the loadComplete method.
+				initLoader = new Loader();
+				initLoader.load(new URLRequest("com/Intro/Intro.swf"));
+				initLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadComplete);
+			}
+			
+			protected function destroy(e:Event):void
+			{
+				// Unload the gameLoader, remove gameComp (UI Component which hosts the gameLoader, and unpause the game.
+				trace("removeIntroScreen");
+				initLoader.unload(); 
+				initComp.removeChild(initLoader);
+				removeElement(initComp);
+			}
+			private function loadComplete(e:Event):void
+			{
+				// Create a new gameComp element and add the gameloader as a child.  Then add the gameComp element at pos 0.
+				trace("load complete");
+				initComp = new UIComponent();  
+				initComp.addChild(initLoader); 
+				addElementAt(initComp,0);
+			}
+			
+			protected function showMenu(event:MouseEvent):void
+			{
+				addElement(introMenu);
+				introMenu.show(0,400);
+			}
+			
+			protected function startGame(event:Event):void
+			{
+				var eventObj:modEvent = new modEvent(Constants.STARTGAME);
+				eventObj.modName = Constants.STARTGAME;
+				dispatchEvent(eventObj);
+			}
+			
+			public function showHelp():void {
+				contentGroup.visible = false;
+				helpGroup.visible = true;
+			} 
+			
+			public function showOptions():void {
+				trace("whoa");
+			}
+			
+			public function hideHelp(event:Event = null):void {
+				helpGroup.visible = false;
+				contentGroup.visible = true;
+			} 
+		]]>
+	</fx:Script>
+	
+	<components:IntroMenu id="introMenu" fontSize="24"/>
+	
+	<s:Label id="title" text="Project Fire X" fontSize="72" color="#00AA00" horizontalCenter="0" paddingTop="20"/>
+	
+	<s:Group id="contentGroup" left="0" right="0" top="0" bottom="0" minWidth="0" minHeight="0">
+		<components:ButtonEx label="Start Game" id="startGameButton" fontSize="36" click="startGame(event)" left="30" bottom="50"/>
+		<components:ButtonEx label="Menu" id="menuButton" fontSize="36" click="showMenu(event)" right="30" bottom="50"/>
+	</s:Group>
+	
+	<s:Group id="helpGroup" visible="false" width="100%" height="100%">
+		<mx:Image id="helpImage" source="{imgCls}" verticalCenter="0" horizontalCenter="0"/>
+		<components:ButtonEx id="closeHelp" label="Close" horizontalCenter="0" width="{helpImage.width / 2}" fontSize="24"
+							 top="{helpImage.y + helpImage.height - 50}" mouseDown="hideHelp()"/>
+	</s:Group>
+	
+</mx:Module>

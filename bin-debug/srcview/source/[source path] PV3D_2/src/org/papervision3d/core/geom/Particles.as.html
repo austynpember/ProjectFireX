@@ -1,0 +1,258 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Particles.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderables</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Vertex3DInstance</span>;    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderables</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Vertex3D</span>;    
+    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Rectangle</span>;    
+    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">math</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Matrix3D</span>;    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderables</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Particle</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">data</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">RenderSessionData</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">objects</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DisplayObject3D</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">culling</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">IObjectCuller</span>;    
+    
+    <span class="ActionScriptASDoc">/**
+     * &lt;p&gt;
+     * The Particles object is a DisplayObject3D that is used solely for displaying particle objects.
+     * A single particle is a 2D graphic that is scaled and positioned relative to a 3D point, without
+     * any perspective distortion. In effect, it's like a plane that is always facing the camera. This 
+     * is sometimes referred to as a 3D sprite, pointsprite or billboard.
+     * 
+     * A particle's appearance is defined by its ParticleMaterial. 
+     * 
+     * &lt;/p&gt;
+     * 
+     * &lt;p&gt;
+     * Example:
+     * &lt;/p&gt;
+     * &lt;pre&gt;&lt;code&gt;
+     * 
+     *  //This example creates a Particles DisplayObject3D and adds 100 particles into it. 
+     * 
+     *    var numParticles : int = 100; 
+     *    
+     *    var particles : Particles = new Particles(); 
+     *    var particleMaterial : ParticleMaterial = new ParticleMaterial(0xff0000, 0.8,ParticleMaterial.SHAPE_CIRCLE); 
+     *    var particleSize : Number = 5; 
+     *    
+     *    for(var i : int = 0; i&lt;numParticles; i++)
+     *    {
+     *         var xpos : Number = Math.random()*200; 
+     *         var ypos : Number = Math.random()*200; 
+     *         var zpos : Number = Math.random()*200; 
+     * 
+     *        var particle : Particle = new Particle(particleMaterial, particleSize, xpos, ypos, zpos);
+     *        particles.addParticle(particle); 
+     *        
+     *    }
+     *    scene.addChild(particles); 
+     * 
+      * &lt;/code&gt;&lt;/pre&gt;
+     * &lt;/p&gt;
+     * 
+     * &lt;p&gt;
+     * See also : ParticleMaterial, MovieAssetParticleMaterial, MovieParticleMaterial, BitmapParticleMaterial. 
+     * &lt;/p&gt;
+     * 
+     * @Author Ralph Hauwert
+     * @Author Seb Lee-Delisle
+     */</span>
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">Particles</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">Vertices3D</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">vertices</span>:<span class="ActionScriptDefault_Text">Array</span>;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">particles</span>:<span class="ActionScriptDefault_Text">Array</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_newID</span> : <span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0; 
+        
+         <span class="ActionScriptASDoc">/**
+         * @param name                An identifier for this Particles object. 
+         * 
+         */</span>
+             
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">Particles</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">name</span>:<span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptString">"Particles"</span><span class="ActionScriptBracket/Brace">)</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">name</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">name</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">_newID</span><span class="ActionScriptOperator">++</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vertices</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">particles</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptReserved">super</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">vertices</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">name</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+        * Converts 3D vertices into 2D space, to prepare for rendering onto the stage.
+        *
+        * @param     parent                The parent DisplayObject3D
+        * @param     renderSessionData    The renderSessionData object for this render cycle. 
+         * 
+        */</span>
+
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">override</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">project</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">parent</span> :<span class="ActionScriptDefault_Text">DisplayObject3D</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">renderSessionData</span>:<span class="ActionScriptDefault_Text">RenderSessionData</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Number</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">super</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">project</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">parent</span><span class="ActionScriptOperator">,</span><span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">viewport</span> : <span class="ActionScriptDefault_Text">Rectangle</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">camera</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">viewport</span>;
+            <span class="ActionScriptComment">// TODO (MEDIUM) implement Frustum camera rendering for Particles
+</span>            
+                <span class="ActionScriptComment">//return projectFrustum(parent, renderSessionData);
+</span>            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">culled</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptReserved">return</span> 0; 
+
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">p</span>:<span class="ActionScriptDefault_Text">Particle</span>;
+            
+            
+        
+            <span class="ActionScriptReserved">for each</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">p</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">particles</span><span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">camera</span> <span class="ActionScriptReserved">is</span> <span class="ActionScriptDefault_Text">IObjectCuller</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">v</span>:<span class="ActionScriptDefault_Text">Vertex3D</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">p</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vertex3D</span>;
+                    <span class="ActionScriptDefault_Text">p</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderScale</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">viewport</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">width</span> <span class="ActionScriptOperator">/</span>2 <span class="ActionScriptOperator">/</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">v</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">view</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">n41</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">v</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span> <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">view</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">n42</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">v</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">z</span> <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">view</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">n43</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">view</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">n44</span><span class="ActionScriptBracket/Brace">)</span> ;
+                <span class="ActionScriptBracket/Brace">}</span> 
+                <span class="ActionScriptReserved">else</span>
+                <span class="ActionScriptBracket/Brace">{</span>    
+                    <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">fz</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">camera</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">focus</span><span class="ActionScriptOperator">*</span><span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">camera</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">zoom</span><span class="ActionScriptBracket/Brace">)</span>;
+                    
+                    <span class="ActionScriptComment">//TODO : Shouldn't this be p.renderScale = fz / (fz + p.vertex3D.vertex3DInstance.z);? 
+</span>                    <span class="ActionScriptDefault_Text">p</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderScale</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">fz</span> <span class="ActionScriptOperator">/</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">camera</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">focus</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">p</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vertex3D</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vertex3DInstance</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">z</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+                <span class="ActionScriptDefault_Text">p</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">updateRenderRect</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+                
+                <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">viewPort</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">particleCuller</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">testParticle</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">p</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptDefault_Text">p</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderCommand</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">screenZ</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">p</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vertex3D</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vertex3DInstance</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">z</span>;
+                    <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderer</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">addToRenderList</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">p</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderCommand</span><span class="ActionScriptBracket/Brace">)</span>;    
+                <span class="ActionScriptBracket/Brace">}</span><span class="ActionScriptReserved">else</span><span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderStatistics</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">culledParticles</span><span class="ActionScriptOperator">++</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">return</span> 1;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptComment">/*
+        public override function projectFrustum( parent :DisplayObject3D, renderSessionData:RenderSessionData ):Number 
+        {
+            
+        
+            var view : Matrix3D = this.view,
+                viewport : Rectangle = renderSessionData.camera.viewport,
+                m11 :Number = view.n11,
+                m12 :Number = view.n12,
+                m13 :Number = view.n13,
+                m21 :Number = view.n21,
+                m22 :Number = view.n22,
+                m23 :Number = view.n23,
+                m31 :Number = view.n31,
+                m32 :Number = view.n32,
+                m33 :Number = view.n33,
+                m41 :Number = view.n41,
+                m42 :Number = view.n42,
+                m43 :Number = view.n43,
+                vx    :Number,
+                vy    :Number,
+                vz    :Number,
+                s_x    :Number,
+                s_y    :Number,
+                s_z    :Number,
+                s_w :Number,
+                vpw :Number = viewport.width / 2,
+                vph :Number = viewport.height / 2,
+                vertex : Vertex3D, 
+                screen : Vertex3DInstance,
+                vertices :Array  = this.geometry.vertices,
+                i        :int    = particles.length,
+                p        : Particle; 
+                
+            while( p = particles[--i] )
+            {
+                vertex = p.vertex3D; 
+                
+                // Center position
+                vx = vertex.x;
+                vy = vertex.y;
+                vz = vertex.z;
+                
+                s_z = vx * m31 + vy * m32 + vz * m33 + view.n34;
+                s_w = vx * m41 + vy * m42 + vz * m43 + view.n44;
+                
+                //trace(s_w);
+                
+                screen = vertex.vertex3DInstance;
+                
+                // to normalized clip space (0.0 to 1.0)
+                // NOTE: can skip and simply test (s_z &lt; 0) and save a div
+                s_z /= s_w;
+            
+                // is point between near- and far-plane?
+                if( screen.visible = (s_z &gt; 0 &amp;&amp; s_z &lt; 1) )
+                {
+                    // to normalized clip space (-1,-1) to (1, 1)
+                    s_x = (vx * m11 + vy * m12 + vz * m13 + view.n14) / s_w;
+                    s_y = (vx * m21 + vy * m22 + vz * m23 + view.n24) / s_w;
+                    
+                    // NOTE: optionally we can flag screen verts here 
+                    //screen.visible = (s_x &gt; -1 &amp;&amp; s_x &lt; 1 &amp;&amp; s_y &gt; -1 &amp;&amp; s_y &lt; 1);
+                    
+                    // project to viewport.
+                    screen.x = s_x * vpw;
+                    
+                    screen.y = s_y * vph;
+                    
+                    //Papervision3D.logger.debug( "sx:" + screen.x + " " +screen.y );
+                    // NOTE: z not lineair, value increases when nearing far-plane.
+                    screen.z = s_z*s_w;
+                } 
+                    trace("particles projectfrustum vertex  visible :", screen.visible);
+                
+            }
+            
+            return 0;
+        }
+        
+        */</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Adds a particle. 
+         * 
+         * @param    particle    The particle to be added.
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">addParticle</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">particle</span>:<span class="ActionScriptDefault_Text">Particle</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">particle</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">instance</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">this</span>;
+            <span class="ActionScriptDefault_Text">particles</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">push</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">particle</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">vertices</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">push</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">particle</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vertex3D</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Removes a particle. 
+         * 
+         * @param    particle    The particle to be removed.
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">removeParticle</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">particle</span>:<span class="ActionScriptDefault_Text">Particle</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">particle</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">instance</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+            <span class="ActionScriptDefault_Text">particles</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">splice</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">particles</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">indexOf</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">particle</span><span class="ActionScriptOperator">,</span>0<span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">,</span> 1<span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">vertices</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">splice</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">vertices</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">indexOf</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">particle</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vertex3D</span><span class="ActionScriptOperator">,</span>0<span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">,</span> 1<span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Removes all the particles. 
+         *  
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">removeAllParticles</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">particles</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">vertices</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">geometry</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vertices</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">vertices</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>

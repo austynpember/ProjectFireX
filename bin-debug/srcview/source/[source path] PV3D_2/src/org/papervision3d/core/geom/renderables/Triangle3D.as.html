@@ -1,0 +1,249 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Triangle3D.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptComment">/*
+ *  PAPER    ON   ERVIS  NPAPER ISION  PE  IS ON  PERVI IO  APER  SI  PA
+ *  AP  VI  ONPA  RV  IO PA     SI  PA ER  SI NP PE     ON AP  VI ION AP
+ *  PERVI  ON  PE VISIO  APER   IONPA  RV  IO PA  RVIS  NP PE  IS ONPAPE
+ *  ER     NPAPER IS     PE     ON  PE  ISIO  AP     IO PA ER  SI NP PER
+ *  RV     PA  RV SI     ERVISI NP  ER   IO   PE VISIO  AP  VISI  PA  RV3D
+ *  ______________________________________________________________________
+ *  papervision3d.org • blog.papervision3d.org • osflash.org/papervision3d
+ */</span>
+
+<span class="ActionScriptComment">/*
+ * Copyright 2006 (c) Carlos Ulloa Matesanz, noventaynueve.com.
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */</span>
+
+<span class="ActionScriptComment">// ______________________________________________________________________
+</span><span class="ActionScriptComment">//                                                                 Face3D
+</span>
+<span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderables</span> <span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">math</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Number3D</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">math</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">NumberUV</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">proto</span><span class="ActionScriptOperator">.</span><span class="ActionScriptOperator">*</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">command</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">IRenderListItem</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">command</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">RenderTriangle</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">materials</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">BitmapMaterial</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">materials</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">special</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">CompositeMaterial</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">objects</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DisplayObject3D</span>;    
+
+    <span class="ActionScriptASDoc">/**
+    * The Face3D class lets you render linear textured triangles. It also supports solid colour fill and hairline outlines.
+    *
+    */</span>
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">Triangle3D</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">AbstractRenderable</span> <span class="ActionScriptReserved">implements</span> <span class="ActionScriptDefault_Text">IRenderable</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptASDoc">/**
+        * An array of Vertex3D objects for the three vertices of the triangle.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">vertices</span> :<span class="ActionScriptDefault_Text">Array</span>;
+    
+        <span class="ActionScriptASDoc">/**
+        * A material id TODO
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_materialName</span> :<span class="ActionScriptDefault_Text">String</span>;
+    
+        <span class="ActionScriptASDoc">/**
+        * A MaterialObject3D object that contains the material properties of the back of a single sided triangle.
+        */</span>
+    <span class="ActionScriptComment">//    public var materialBack :MaterialObject3D;
+</span>        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">uv0</span>:<span class="ActionScriptDefault_Text">NumberUV</span>;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">uv1</span>:<span class="ActionScriptDefault_Text">NumberUV</span>;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">uv2</span>:<span class="ActionScriptDefault_Text">NumberUV</span>;
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_uvArray</span>:<span class="ActionScriptDefault_Text">Array</span>;
+        <span class="ActionScriptComment">// ______________________________________________________________________
+</span>    
+        <span class="ActionScriptASDoc">/**
+        * [read-only] The average depth (z coordinate) of the transformed triangle. Also known as the distance from the camera. Used internally for z-sorting.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">screenZ</span> :<span class="ActionScriptDefault_Text">Number</span>;
+    
+        <span class="ActionScriptASDoc">/**
+        * [read-only] A Boolean value that indicates that the face is visible, i.e. it's vertices are in front of the camera.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">visible</span> :<span class="ActionScriptDefault_Text">Boolean</span>;    
+    
+        <span class="ActionScriptASDoc">/**
+        * [read-only] Unique id of this instance.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">id</span> :<span class="ActionScriptDefault_Text">Number</span>;
+        
+        <span class="ActionScriptASDoc">/**
+         * Used to store references to the vertices.
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">v0</span>:<span class="ActionScriptDefault_Text">Vertex3D</span>;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">v1</span>:<span class="ActionScriptDefault_Text">Vertex3D</span>;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">v2</span>:<span class="ActionScriptDefault_Text">Vertex3D</span>;
+        
+        <span class="ActionScriptASDoc">/**
+         * The face normal
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">faceNormal</span>:<span class="ActionScriptDefault_Text">Number3D</span>;
+        
+        <span class="ActionScriptASDoc">/**
+         * The transformed Face3DInstance
+         */</span>
+        <span class="ActionScriptComment">//public var face3DInstance:Triangle3DInstance;
+</span>        
+        <span class="ActionScriptASDoc">/**
+         * The do3d instance this triangle belongs too.
+         */</span>
+        <span class="ActionScriptComment">//public var instance:DisplayObject3D;
+</span>        
+        <span class="ActionScriptASDoc">/**
+         * stores the material for this face.
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">material</span>:<span class="ActionScriptDefault_Text">MaterialObject3D</span>;
+                
+        <span class="ActionScriptComment">//To be docced
+</span>        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">renderCommand</span>:<span class="ActionScriptDefault_Text">RenderTriangle</span>;
+        
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_totalFaces</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 0;
+        
+        <span class="ActionScriptASDoc">/**
+        * The Face3D constructor lets you create linear textured or solid colour triangles.
+        *
+        * @param    vertices    An array of Vertex3D objects for the three vertices of the triangle.
+        * @param    material    A MaterialObject3D object that contains the material properties of the triangle.
+        * @param    uv            An array of {x,y} objects for the corresponding UV pixel coordinates of each triangle vertex.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">Triangle3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">do3dInstance</span>:<span class="ActionScriptDefault_Text">DisplayObject3D</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">vertices</span>:<span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">material</span>:<span class="ActionScriptDefault_Text">MaterialObject3D</span><span class="ActionScriptOperator">=</span><span class="ActionScriptReserved">null</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">uv</span>:<span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptOperator">=</span><span class="ActionScriptReserved">null</span> <span class="ActionScriptBracket/Brace">)</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">instance</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">do3dInstance</span>;
+            
+            
+            <span class="ActionScriptComment">//Setup this instance
+</span>            <span class="ActionScriptComment">//face3DInstance = new Triangle3DInstance(this, do3dInstance);
+</span>            
+            <span class="ActionScriptDefault_Text">faceNormal</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Number3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptComment">// Vertices
+</span>            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">vertices</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">vertices</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span> <span class="ActionScriptOperator">==</span> 3<span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vertices</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">vertices</span>;
+                <span class="ActionScriptDefault_Text">v0</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">vertices</span><span class="ActionScriptBracket/Brace">[</span>0<span class="ActionScriptBracket/Brace">]</span>;
+                <span class="ActionScriptDefault_Text">v1</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">vertices</span><span class="ActionScriptBracket/Brace">[</span>1<span class="ActionScriptBracket/Brace">]</span>;
+                <span class="ActionScriptDefault_Text">v2</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">vertices</span><span class="ActionScriptBracket/Brace">[</span>2<span class="ActionScriptBracket/Brace">]</span>;
+                <span class="ActionScriptDefault_Text">createNormal</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span><span class="ActionScriptReserved">else</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">vertices</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">v0</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">vertices</span><span class="ActionScriptBracket/Brace">[</span>0<span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Vertex3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">v1</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">vertices</span><span class="ActionScriptBracket/Brace">[</span>1<span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Vertex3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">v2</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">vertices</span><span class="ActionScriptBracket/Brace">[</span>2<span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Vertex3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptComment">// Material, if passed from a materials list.
+</span>            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">material</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">material</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">uv</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">uv</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">id</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">_totalFaces</span><span class="ActionScriptOperator">++</span>;
+            
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderCommand</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">RenderTriangle</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">this</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">reset</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">object</span>:<span class="ActionScriptDefault_Text">DisplayObject3D</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">vertices</span>:<span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">material</span>:<span class="ActionScriptDefault_Text">MaterialObject3D</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">uv</span>:<span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span><span class="ActionScriptBracket/Brace">{</span>
+            
+                <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">instance</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">object</span>;
+                <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderCommand</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">instance</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">object</span>;
+                <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderCommand</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderer</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">material</span>;
+        
+                <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vertices</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">vertices</span>;
+                <span class="ActionScriptDefault_Text">updateVertices</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptComment">//createNormal();
+</span>    
+                <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">material</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">material</span>;
+                <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">uv</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">uv</span>;
+                
+                <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">material</span> <span class="ActionScriptReserved">is</span> <span class="ActionScriptDefault_Text">BitmapMaterial</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                    
+                    <span class="ActionScriptDefault_Text">BitmapMaterial</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">material</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">uvMatrices</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderCommand</span><span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+                    
+                <span class="ActionScriptBracket/Brace">}</span>
+                
+                <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">material</span> <span class="ActionScriptReserved">is</span> <span class="ActionScriptDefault_Text">CompositeMaterial</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptReserved">for each</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">mat</span>:<span class="ActionScriptDefault_Text">MaterialObject3D</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">CompositeMaterial</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">material</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">materials</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                        
+                        <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">mat</span> <span class="ActionScriptReserved">is</span> <span class="ActionScriptDefault_Text">BitmapMaterial</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                            
+                            <span class="ActionScriptDefault_Text">BitmapMaterial</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">mat</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">uvMatrices</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderCommand</span><span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+                            
+                        <span class="ActionScriptBracket/Brace">}</span>
+                    <span class="ActionScriptBracket/Brace">}</span>
+                <span class="ActionScriptBracket/Brace">}</span>
+                
+                
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">createNormal</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">vn0</span>:<span class="ActionScriptDefault_Text">Number3D</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">v0</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">getPosition</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">vn1</span>:<span class="ActionScriptDefault_Text">Number3D</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">v1</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">getPosition</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">vn2</span>:<span class="ActionScriptDefault_Text">Number3D</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">v2</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">getPosition</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;    
+            <span class="ActionScriptDefault_Text">vn1</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">minusEq</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">vn0</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">vn2</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">minusEq</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">vn0</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">faceNormal</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">Number3D</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">cross</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">vn1</span><span class="ActionScriptOperator">,</span><span class="ActionScriptDefault_Text">vn2</span><span class="ActionScriptOperator">,</span><span class="ActionScriptDefault_Text">faceNormal</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">faceNormal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">normalize</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">getRenderListItem</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">IRenderListItem</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">renderCommand</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">updateVertices</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">v0</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">vertices</span><span class="ActionScriptBracket/Brace">[</span>0<span class="ActionScriptBracket/Brace">]</span>;
+            <span class="ActionScriptDefault_Text">v1</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">vertices</span><span class="ActionScriptBracket/Brace">[</span>1<span class="ActionScriptBracket/Brace">]</span>;
+            <span class="ActionScriptDefault_Text">v2</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">vertices</span><span class="ActionScriptBracket/Brace">[</span>2<span class="ActionScriptBracket/Brace">]</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+        * An array of {x,y} objects for the corresponding UV pixel coordinates of each triangle vertex.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">set</span> <span class="ActionScriptDefault_Text">uv</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">uvs</span>:<span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">uvs</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">uvs</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span> <span class="ActionScriptOperator">==</span> 3<span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                
+                <span class="ActionScriptDefault_Text">uv0</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">NumberUV</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">uvs</span><span class="ActionScriptBracket/Brace">[</span>0<span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">uv1</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">NumberUV</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">uvs</span><span class="ActionScriptBracket/Brace">[</span>1<span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">uv2</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">NumberUV</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">uvs</span><span class="ActionScriptBracket/Brace">[</span>2<span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptDefault_Text">_uvArray</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">uvs</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">get</span> <span class="ActionScriptDefault_Text">uv</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Array</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">_uvArray</span>;    
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>

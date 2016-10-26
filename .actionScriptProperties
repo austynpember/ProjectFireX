@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<actionScriptProperties analytics="false" mainApplicationPath="ProjectFireX.mxml" projectUUID="878aee7e-4a29-40f8-9600-5f1984493e4a" version="6">
+  <compiler additionalCompilerArguments="-locale en_US" autoRSLOrdering="true" copyDependentFiles="true" fteInMXComponents="false" generateAccessible="true" htmlExpressInstall="true" htmlGenerate="true" htmlHistoryManagement="true" htmlPlayerVersionCheck="true" includeNetmonSwc="false" outputFolderPath="bin-debug" sourceFolderPath="src" strict="true" targetPlayerVersion="0.0.0" useApolloConfig="false" useDebugRSLSwfs="true" verifyDigests="true" warn="true">
+    <compilerSourcePath>
+      <compilerSourcePathEntry kind="1" linkType="1" path="libs"/>
+      <compilerSourcePathEntry kind="1" linkType="1" path="${DOCUMENTS}/PV3D_2"/>
+    </compilerSourcePath>
+    <libraryPath defaultLinkType="0">
+      <libraryPathEntry kind="4" path="">
+        <excludedEntries>
+          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/flex.swc" useDefaultLinkType="false"/>
+        </excludedEntries>
+      </libraryPathEntry>
+      <libraryPathEntry kind="1" linkType="1" path="libs"/>
+      <libraryPathEntry kind="3" linkType="1" path="libs/Papervision3D_2.1.932.swc" useDefaultLinkType="false"/>
+    </libraryPath>
+    <sourceAttachmentPath/>
+  </compiler>
+  <applications>
+    <application path="ProjectFireX.mxml"/>
+  </applications>
+  <modules>
+    <module application="src/ProjectFireX.mxml" destPath="Intro.swf" optimize="true" sourcePath="src/com/Intro/Intro.as"/>
+    <module application="src/ProjectFireX.mxml" destPath="mods/Highscore.swf" optimize="true" sourcePath="src/mods/Highscore.mxml"/>
+    <module application="src/ProjectFireX.mxml" destPath="mods/Interface.swf" optimize="true" sourcePath="src/mods/Interface.mxml"/>
+    <module application="src/ProjectFireX.mxml" destPath="mods/IntroScreen.swf" optimize="true" sourcePath="src/mods/IntroScreen.mxml"/>
+    <module application="src/ProjectFireX.mxml" destPath="mods/Options.swf" optimize="true" sourcePath="src/mods/Options.mxml"/>
+    <module application="src/ProjectFireX.mxml" destPath="GameController.swf" optimize="true" sourcePath="src/com/game/GameController.as"/>
+  </modules>
+  <buildCSSFiles/>
+</actionScriptProperties>

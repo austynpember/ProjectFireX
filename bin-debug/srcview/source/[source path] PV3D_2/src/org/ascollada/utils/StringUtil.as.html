@@ -1,0 +1,179 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>StringUtil.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptComment">////////////////////////////////////////////////////////////////////////////////
+</span><span class="ActionScriptComment">//
+</span><span class="ActionScriptComment">//  Copyright (C) 2003-2007 Adobe Systems Incorporated
+</span><span class="ActionScriptComment">//  All Rights Reserved. The following is Source Code and is subject to all
+</span><span class="ActionScriptComment">//  restrictions on such code as contained in the End User License Agreement
+</span><span class="ActionScriptComment">//  accompanying this product.
+</span><span class="ActionScriptComment">//
+</span><span class="ActionScriptComment">////////////////////////////////////////////////////////////////////////////////
+</span>
+<span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ascollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">utils</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptASDoc">/**
+     *  The StringUtil utility class is an all-static class with methods for
+     *  working with String objects within Flex.
+     *  You do not create instances of StringUtil;
+     *  instead you call methods such as 
+     *  the &lt;code&gt;StringUtil.substitute()&lt;/code&gt; method.  
+     */</span>
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">StringUtil</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptComment">//--------------------------------------------------------------------------
+</span>        <span class="ActionScriptComment">//
+</span>        <span class="ActionScriptComment">//  Class methods
+</span>        <span class="ActionScriptComment">//
+</span>        <span class="ActionScriptComment">//--------------------------------------------------------------------------
+</span>    
+        <span class="ActionScriptASDoc">/**
+         *  Removes all whitespace characters from the beginning and end
+         *  of the specified string.
+         *
+         *  @param str The String whose whitespace should be trimmed. 
+         *
+         *  @return Updated String where whitespace was removed from the 
+         *  beginning and end. 
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">trim</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">str</span>:<span class="ActionScriptDefault_Text">String</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">String</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">startIndex</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0;
+            <span class="ActionScriptReserved">while</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">isWhitespace</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">str</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">charAt</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">startIndex</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptOperator">++</span><span class="ActionScriptDefault_Text">startIndex</span>;
+    
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">endIndex</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">str</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span> <span class="ActionScriptOperator">-</span> 1;
+            <span class="ActionScriptReserved">while</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">isWhitespace</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">str</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">charAt</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">endIndex</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptOperator">--</span><span class="ActionScriptDefault_Text">endIndex</span>;
+    
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">endIndex</span> <span class="ActionScriptOperator">&gt;=</span> <span class="ActionScriptDefault_Text">startIndex</span><span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">str</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">slice</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">startIndex</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">endIndex</span> <span class="ActionScriptOperator">+</span> 1<span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">else</span>
+                <span class="ActionScriptReserved">return</span> <span class="ActionScriptString">""</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         *  Removes all whitespace characters from the beginning and end
+         *  of each element in an Array, where the Array is stored as a String. 
+         *
+         *  @param value The String whose whitespace should be trimmed. 
+         *
+         *  @param separator The String that delimits each Array element in the string.
+         *
+         *  @return Updated String where whitespace was removed from the 
+         *  beginning and end of each element. 
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">trimArrayElements</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">value</span>:<span class="ActionScriptDefault_Text">String</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">delimiter</span>:<span class="ActionScriptDefault_Text">String</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">String</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">value</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptString">""</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">value</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptReserved">null</span><span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">items</span>:<span class="ActionScriptDefault_Text">Array</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">value</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">split</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">delimiter</span><span class="ActionScriptBracket/Brace">)</span>;
+                
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">len</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">items</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span>;
+                <span class="ActionScriptReserved">for</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">len</span>; <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">++</span><span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptDefault_Text">items</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">StringUtil</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">trim</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">items</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+                
+                <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">len</span> <span class="ActionScriptOperator">&gt;</span> 0<span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptDefault_Text">value</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">items</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">join</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">delimiter</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">value</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    
+        <span class="ActionScriptASDoc">/**
+         *  Returns &lt;code&gt;true&lt;/code&gt; if the specified string is
+         *  a single space, tab, carriage return, newline, or formfeed character.
+         *
+         *  @param str The String that is is being queried. 
+         *
+         *  @return &lt;code&gt;true&lt;/code&gt; if the specified string is
+         *  a single space, tab, carriage return, newline, or formfeed character.
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">isWhitespace</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">character</span>:<span class="ActionScriptDefault_Text">String</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Boolean</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">switch</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">character</span><span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptReserved">case</span> <span class="ActionScriptString">" "</span>:
+                <span class="ActionScriptReserved">case</span> <span class="ActionScriptString">"\t"</span>:
+                <span class="ActionScriptReserved">case</span> <span class="ActionScriptString">"\r"</span>:
+                <span class="ActionScriptReserved">case</span> <span class="ActionScriptString">"\n"</span>:
+                <span class="ActionScriptReserved">case</span> <span class="ActionScriptString">"\f"</span>:
+                    <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">true</span>;
+    
+                <span class="ActionScriptReserved">default</span>:
+                    <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">false</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+    
+        <span class="ActionScriptASDoc">/**
+         *  Substitutes "{n}" tokens within the specified string
+         *  with the respective arguments passed in.
+         *
+         *  @param str The string to make substitutions in.
+         *  This string can contain special tokens of the form
+         *  &lt;code&gt;{n}&lt;/code&gt;, where &lt;code&gt;n&lt;/code&gt; is a zero based index,
+         *  that will be replaced with the additional parameters
+         *  found at that index if specified.
+         *
+         *  @param rest Additional parameters that can be substituted
+         *  in the &lt;code&gt;str&lt;/code&gt; parameter at each &lt;code&gt;{n}&lt;/code&gt;
+         *  location, where &lt;code&gt;n&lt;/code&gt; is an integer (zero based)
+         *  index value into the array of values specified.
+         *  If the first parameter is an array this array will be used as
+         *  a parameter list.
+         *  This allows reuse of this routine in other methods that want to
+         *  use the ... rest signature.
+         *  For example &lt;pre&gt;
+         *     public function myTracer(str:String, ... rest):void
+         *     { 
+         *         label.text += StringUtil.substitute(str, rest) + "\n";
+         *     } &lt;/pre&gt;
+         *
+         *  @return New string with all of the &lt;code&gt;{n}&lt;/code&gt; tokens
+         *  replaced with the respective arguments specified.
+         *
+         *  @example
+         *
+         *  var str:String = "here is some info '{0}' and {1}";
+         *  trace(StringUtil.substitute(str, 15.4, true));
+         *
+         *  // this will output the following string:
+         *  // "here is some info '15.4' and true"
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">substitute</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">str</span>:<span class="ActionScriptDefault_Text">String</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptOperator">...</span> <span class="ActionScriptDefault_Text">rest</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">String</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptComment">// Replace all of the parameters in the msg string.
+</span>            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">len</span>:<span class="ActionScriptDefault_Text">uint</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">rest</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">args</span>:<span class="ActionScriptDefault_Text">Array</span>;
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">len</span> <span class="ActionScriptOperator">==</span> 1 <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">rest</span><span class="ActionScriptBracket/Brace">[</span>0<span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptReserved">is</span> <span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">args</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">rest</span><span class="ActionScriptBracket/Brace">[</span>0<span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptReserved">as</span> <span class="ActionScriptDefault_Text">Array</span>;
+                <span class="ActionScriptDefault_Text">len</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">args</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">else</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">args</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">rest</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptReserved">for</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">len</span>; <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">++</span><span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">str</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">str</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">replace</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">RegExp</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"\\{"</span><span class="ActionScriptOperator">+</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">+</span><span class="ActionScriptString">"\\}"</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptString">"g"</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">args</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+    
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">str</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptBracket/Brace">}</span>
+</pre></body>
+</html>

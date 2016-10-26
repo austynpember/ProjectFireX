@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Button xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  mouseOver="shadowPlay.end();shadowPlay.play();glowImage.play();playHover()" 
+		  mouseOut="shadowPlay.end();unglowImage.play()"
+		  mouseDown="playClick()">
+	
+	<fx:Declarations>
+		<s:AnimateFilter id="shadowPlay" 
+						 target="{this}"
+						 repeatCount="0"
+						 duration="500"
+						 repeatBehavior="reverse"
+						 bitmapFilter="{new spark.filters.DropShadowFilter()}">
+			<s:SimpleMotionPath property="color" valueFrom="0" valueTo="0x0000FF" />
+			<s:SimpleMotionPath property="distance" valueFrom="0" valueTo="10"/>
+			<s:SimpleMotionPath property="angle" valueFrom="270" valueTo="360"/>
+		</s:AnimateFilter>	
+		
+			<mx:Glow id="glowImage" target="{this}" duration="1000"
+					 alphaFrom="1.0" alphaTo="0.3"
+					 blurXFrom="0.0" blurXTo="40.0"
+					 blurYFrom="0.0" blurYTo="40.0"
+					 color="0x00FF00"/>
+			<mx:Glow id="unglowImage" target="{this}" duration="1000" 
+					 alphaFrom="0.6" alphaTo="0.0"
+					 blurXFrom="40.0" blurXTo="0.0"
+					 blurYFrom="40.0" blurYTo="0.0"
+					 color="0xFF0000"/>
+
+		
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import spark.filters.DropShadowFilter;
+			
+			[Embed(source="/../assets/Sound/Misc/Click1_SFX.mp3")] 
+			private var soundAsset1:Class;
+			private var sound1:Sound = new soundAsset1() as Sound;
+			[Embed(source="/../assets/Sound/Misc/Hover_SFX.mp3")] 
+			private var soundAsset2:Class;
+			private var sound2:Sound = new soundAsset2() as Sound;
+			private var st:SoundTransform = new SoundTransform(0.3);
+			
+			private function playClick():void {
+				sound1.play(0,0,st);
+			}
+			
+			private function playHover():void {
+				sound2.play(0,0,st);
+			}
+		]]>
+	</fx:Script>
+</s:Button>

@@ -1,0 +1,313 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>BasicRenderEngine.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    
+    <span class="ActionScriptASDoc">/**
+     * @Author Ralph Hauwert
+     */</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Point</span>;
+    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">clipping</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DefaultClipping</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">proto</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">CameraObject3D</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">proto</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">SceneObject3D</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">AbstractRenderEngine</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">IRenderEngine</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">command</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">IRenderListItem</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">command</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">RenderableListItem</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">data</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">RenderHitData</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">data</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">RenderSessionData</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">data</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">RenderStatistics</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">filter</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">BasicRenderFilter</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">filter</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">IRenderFilter</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">material</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MaterialManager</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">project</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">BasicProjectionPipeline</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">project</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ProjectionPipeline</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">sort</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">BasicRenderSorter</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">sort</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">IRenderSorter</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">utils</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">StopWatch</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">events</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">RendererEvent</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">view</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Viewport3D</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">view</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">layer</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ViewportLayer</span>;
+    
+    <span class="ActionScriptASDoc">/**
+     * &lt;code&gt;BasicRenderEngine&lt;/code&gt; links &lt;code&gt;Viewport3D&lt;/code&gt;s, 
+     * &lt;code&gt;Scene3D&lt;/code&gt;, and &lt;code&gt;Camera3D&lt;/code&gt;s together
+     *  by gathering in all of their data, rendering the data, then calling the 
+     *  necessary functions to update from the rendered data
+     */</span>    
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">BasicRenderEngine</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">AbstractRenderEngine</span> <span class="ActionScriptReserved">implements</span> <span class="ActionScriptDefault_Text">IRenderEngine</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptASDoc">/**
+         * The type of projection pipeline used for projecting and culling. Defaults
+         * to BasicProjectionPipeline
+         * 
+         * @see org.papervision3d.core.render.project.BasicProjectionPipeline
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">projectionPipeline</span>:<span class="ActionScriptDefault_Text">ProjectionPipeline</span>;
+        <span class="ActionScriptASDoc">/**
+         * The type of z-sorting to be used with the rendered data based on 
+         * their respective screen depth. Defaults to &lt;code&gt;BasicRenderSorter&lt;/code&gt;.
+         * 
+         * @see org.papervision3d.core.render.sort.BasicRenderSorter
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">sorter</span>:<span class="ActionScriptDefault_Text">IRenderSorter</span>;
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">clipping</span>:<span class="ActionScriptDefault_Text">DefaultClipping</span>;
+        
+        <span class="ActionScriptASDoc">/**
+         * A filter (such as FogFilter) to be used in the renderList. Defaults to 
+         * &lt;code&gt;BasicRenderFilter&lt;/code&gt;
+         * 
+         * @see org.papervision3d.core.render.filter.BasicRenderFilter
+         * @see org.papervision3d.core.render.filter.FogFilter
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">filter</span>:<span class="ActionScriptDefault_Text">IRenderFilter</span>;
+        <span class="ActionScriptASDoc">/** @private */</span>
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">renderDoneEvent</span>:<span class="ActionScriptDefault_Text">RendererEvent</span>;
+        <span class="ActionScriptASDoc">/** @private */</span>
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">projectionDoneEvent</span>:<span class="ActionScriptDefault_Text">RendererEvent</span>;
+        <span class="ActionScriptASDoc">/** @private */</span>
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">renderStatistics</span>:<span class="ActionScriptDefault_Text">RenderStatistics</span>;
+        <span class="ActionScriptASDoc">/** @private */</span>
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">renderList</span>:<span class="ActionScriptDefault_Text">Array</span>;
+        <span class="ActionScriptASDoc">/** @private */</span>
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">renderSessionData</span>:<span class="ActionScriptDefault_Text">RenderSessionData</span>;
+        <span class="ActionScriptASDoc">/** @private */</span>
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">cleanRHD</span>:<span class="ActionScriptDefault_Text">RenderHitData</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">RenderHitData</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptASDoc">/** @private */</span>
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">stopWatch</span>:<span class="ActionScriptDefault_Text">StopWatch</span>;
+        
+        
+    
+        <span class="ActionScriptASDoc">/**
+         * Creates and prepares all the objects and events needed for rendering
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">BasicRenderEngine</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">init</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;             
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Destroys all of &lt;code&gt;BasicRenderEngine&lt;/code&gt;'s objects for Garbage Collection purposes.
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">destroy</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">renderDoneEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+            <span class="ActionScriptDefault_Text">projectionDoneEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+            <span class="ActionScriptDefault_Text">projectionPipeline</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+            <span class="ActionScriptDefault_Text">sorter</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+            <span class="ActionScriptDefault_Text">filter</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+            <span class="ActionScriptDefault_Text">renderStatistics</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+            <span class="ActionScriptDefault_Text">renderList</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">destroy</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">renderSessionData</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+            <span class="ActionScriptDefault_Text">cleanRHD</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+            <span class="ActionScriptDefault_Text">stopWatch</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+            <span class="ActionScriptDefault_Text">clipping</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptASDoc">/** @private */</span>
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">init</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">renderStatistics</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">RenderStatistics</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptDefault_Text">projectionPipeline</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">BasicProjectionPipeline</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptDefault_Text">stopWatch</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">StopWatch</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+                
+            <span class="ActionScriptDefault_Text">sorter</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">BasicRenderSorter</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">filter</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">BasicRenderFilter</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptDefault_Text">renderList</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">clipping</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+            
+            <span class="ActionScriptDefault_Text">renderSessionData</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">RenderSessionData</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderer</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">this</span>;
+            
+            <span class="ActionScriptDefault_Text">projectionDoneEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">RendererEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">RendererEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">PROJECTION_DONE</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">renderDoneEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">RendererEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">RendererEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">RENDER_DONE</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Takes the data from the scene, camera, and viewport, renders it, then updates the viewport
+         * 
+         * @param camera            The &lt;code&gt;CameraObject3D&lt;/code&gt; looking at the scene
+         * @param scene                The &lt;code&gt;Scene3D&lt;/code&gt; holding the &lt;code&gt;DisplayObject3D&lt;/code&gt;'s you want rendered
+         * @param viewPort            The &lt;code&gt;Viewport3D&lt;/code&gt; that will display your scene
+         * 
+         * @return RenderStatistics        The &lt;code&gt;RenderStatistics&lt;/code&gt; objectholds all the data from the last render
+         */</span>
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">renderScene</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">scene</span>:<span class="ActionScriptDefault_Text">SceneObject3D</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">camera</span>:<span class="ActionScriptDefault_Text">CameraObject3D</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">viewPort</span>:<span class="ActionScriptDefault_Text">Viewport3D</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">RenderStatistics</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptComment">// Set the camera's viewport so it can resize its frustum.
+</span>            <span class="ActionScriptDefault_Text">camera</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">viewport</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">viewPort</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">sizeRectangle</span>;
+            
+            <span class="ActionScriptComment">//Update the renderSessionData object.
+</span>            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">scene</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">scene</span>;
+            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">camera</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">camera</span>;
+            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">viewPort</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">viewPort</span>;
+            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">container</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">viewPort</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">containerSprite</span>;
+            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">triangleCuller</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">viewPort</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">triangleCuller</span>;
+            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">particleCuller</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">viewPort</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">particleCuller</span>;
+            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderObjects</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">scene</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">objects</span>;
+            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderLayers</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderStatistics</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">clear</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">clipping</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">clipping</span>;
+            
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">clipping</span><span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptDefault_Text">clipping</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">reset</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptComment">//Clear the viewport.
+</span>            <span class="ActionScriptDefault_Text">viewPort</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">updateBeforeRender</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptComment">//Project the Scene (this will fill up the renderlist).
+</span>            <span class="ActionScriptDefault_Text">projectionPipeline</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">project</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">hasEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">RendererEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">PROJECTION_DONE</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">projectionDoneEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptComment">//Render the Scene. TODO: delete null if layers is deleted from doRender
+</span>            <span class="ActionScriptDefault_Text">doRender</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">null</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">hasEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">RendererEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">RENDER_DONE</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderDoneEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderStatistics</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Works similarly to &lt;code&gt;renderScene&lt;/code&gt;, but also takes an array 
+         * of specific &lt;code&gt;ViewportLayer3D&lt;/code&gt;'s to
+         * render
+         * 
+         * @param camera                The &lt;code&gt;CameraObject3D&lt;/code&gt; looking at the scene
+         * @param scene                    The &lt;code&gt;Scene3D&lt;/code&gt; holding the &lt;code&gt;DisplayObject3D&lt;/code&gt;'s you want rendered
+         * @param viewPort                The &lt;code&gt;Viewport3D&lt;/code&gt; that will display your scene
+         * 
+         * @return RenderStatistics        The &lt;code&gt;RenderStatistics&lt;/code&gt; objectholds all the data from the last render
+         * 
+         * @see #renderScene
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">renderLayers</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">scene</span>:<span class="ActionScriptDefault_Text">SceneObject3D</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">camera</span>:<span class="ActionScriptDefault_Text">CameraObject3D</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">viewPort</span>:<span class="ActionScriptDefault_Text">Viewport3D</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">layers</span>:<span class="ActionScriptDefault_Text">Array</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">RenderStatistics</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptComment">//Update the renderSessionData object.
+</span>            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">scene</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">scene</span>;
+            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">camera</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">camera</span>;
+            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">viewPort</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">viewPort</span>;
+            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">container</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">viewPort</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">containerSprite</span>;
+            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">triangleCuller</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">viewPort</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">triangleCuller</span>;
+            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">particleCuller</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">viewPort</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">particleCuller</span>;
+            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderObjects</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getLayerObjects</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">layers</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderLayers</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">layers</span>;
+            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderStatistics</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">clear</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">clipping</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">clipping</span>;
+
+            <span class="ActionScriptComment">//Clear the viewport.
+</span>        
+            <span class="ActionScriptDefault_Text">viewPort</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">updateBeforeRender</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptComment">//Project the Scene (this will fill up the renderlist).
+</span>            <span class="ActionScriptDefault_Text">projectionPipeline</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">project</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">hasEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">RendererEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">PROJECTION_DONE</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">projectionDoneEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptComment">//Render the Scene.
+</span>            <span class="ActionScriptDefault_Text">doRender</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">hasEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">RendererEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">RENDER_DONE</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderDoneEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderStatistics</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/** @private */</span>
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">getLayerObjects</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">layers</span>:<span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">array</span>:<span class="ActionScriptDefault_Text">Array</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptReserved">for each</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">vpl</span>:<span class="ActionScriptDefault_Text">ViewportLayer</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">layers</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">array</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">array</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">concat</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">vpl</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">getLayerObjects</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">array</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptComment">//TODO: layers parameter isn't used. Delete?
+</span>        <span class="ActionScriptASDoc">/** @private */</span>
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">doRender</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderSessionData</span>:<span class="ActionScriptDefault_Text">RenderSessionData</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">layers</span>:<span class="ActionScriptDefault_Text">Array</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">RenderStatistics</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">stopWatch</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">reset</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">stopWatch</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">start</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptComment">//Update Materials.
+</span>            <span class="ActionScriptDefault_Text">MaterialManager</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">getInstance</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">updateMaterialsBeforeRender</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptBracket/Brace">)</span>;
+
+            <span class="ActionScriptComment">//Filter the list
+</span>            <span class="ActionScriptDefault_Text">filter</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">filter</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderList</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptComment">//Sort entire list.
+</span>            <span class="ActionScriptDefault_Text">sorter</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">sort</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderList</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">rc</span>:<span class="ActionScriptDefault_Text">RenderableListItem</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">viewport</span>:<span class="ActionScriptDefault_Text">Viewport3D</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">viewPort</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">vpl</span>:<span class="ActionScriptDefault_Text">ViewportLayer</span>;
+
+            <span class="ActionScriptReserved">while</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">rc</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">renderList</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">pop</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                
+                <span class="ActionScriptDefault_Text">vpl</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">viewport</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">accessLayerFor</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">rc</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">true</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">rc</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">vpl</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">graphicsChannel</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">viewport</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">lastRenderList</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">push</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">rc</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">vpl</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">processRenderItem</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">rc</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptComment">//Update Materials
+</span>            <span class="ActionScriptDefault_Text">MaterialManager</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">getInstance</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">updateMaterialsAfterRender</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderStatistics</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderTime</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">stopWatch</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">stop</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">viewPort</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">updateAfterRender</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">renderStatistics</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptComment">//TODO: Redundant? Someone please tell me a use case scenario: John L.
+</span>        <span class="ActionScriptASDoc">/**
+         * @private
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">hitTestPoint2D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">point</span>:<span class="ActionScriptDefault_Text">Point</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">viewPort3D</span>:<span class="ActionScriptDefault_Text">Viewport3D</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">RenderHitData</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">viewPort3D</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">hitTestPoint2D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">point</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Adds a &lt;code&gt;renderCommand&lt;/code&gt; to the &lt;code&gt;renderList&lt;/code&gt;
+         * 
+         * @param renderCommand        A command to be used in the &lt;code&gt;renderList&lt;/code&gt;
+         * 
+         * @return int                An integer representing the length of the &lt;code&gt;renderList&lt;/code&gt;
+         */</span>
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">addToRenderList</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderCommand</span>:<span class="ActionScriptDefault_Text">RenderableListItem</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">int</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">renderList</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">push</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderCommand</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Removes a &lt;code&gt;renderCommand&lt;/code&gt; from the &lt;code&gt;renderList&lt;/code&gt;
+         * 
+         * @param renderCommand        A command to be removed from the &lt;code&gt;renderList&lt;/code&gt;
+         * 
+         * @return int                An integer representing the length of the &lt;code&gt;renderList&lt;/code&gt;
+         */</span>
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">removeFromRenderList</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderCommand</span>:<span class="ActionScriptDefault_Text">IRenderListItem</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">int</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">renderList</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">splice</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderList</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">indexOf</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderCommand</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">,</span>1<span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>

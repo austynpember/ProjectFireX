@@ -1,0 +1,203 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>DaeEffect.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptComment">/*
+ * Copyright 2007 (c) Tim Knip, ascollada.org.
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */</span>
+ 
+<span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ascollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">fx</span> <span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ascollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DaeDocument</span>;    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ascollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ASCollada</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ascollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DaeEntity</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ascollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">types</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DaeColorOrTexture</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ascollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">utils</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Logger</span>;
+        
+    <span class="ActionScriptASDoc">/**
+     * 
+     */</span>
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">DaeEffect</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">DaeEntity</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptASDoc">/** */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">color</span>:<span class="ActionScriptDefault_Text">DaeConstant</span>;
+        
+        <span class="ActionScriptASDoc">/** */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">newparams</span>:<span class="ActionScriptDefault_Text">Object</span>;
+        
+        <span class="ActionScriptASDoc">/** **/</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">texture_url</span>:<span class="ActionScriptDefault_Text">String</span>;
+        
+        <span class="ActionScriptASDoc">/** */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">double_sided</span>:<span class="ActionScriptDefault_Text">Boolean</span>;
+        
+        <span class="ActionScriptASDoc">/** */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">wireframe</span>:<span class="ActionScriptDefault_Text">Boolean</span>;
+        
+        <span class="ActionScriptASDoc">/**
+         * 
+         * @param    node
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">DaeEffect</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">document</span>:<span class="ActionScriptDefault_Text">DaeDocument</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">node</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">super</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">document</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">node</span> <span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * 
+         * @param    node
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">read</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">node</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>            
+            <span class="ActionScriptReserved">super</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">read</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">node</span> <span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">double_sided</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">wireframe</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+            
+            <span class="ActionScriptComment">// The &lt;profile_COMMON&gt; elements encapsulate all the values and declarations for 
+</span>            <span class="ActionScriptComment">// a platform-independent fixed-function shader. All platforms are required to 
+</span>            <span class="ActionScriptComment">// support &lt;profile_COMMON&gt;. &lt;profile_COMMON&gt; effects are designed to be used as 
+</span>            <span class="ActionScriptComment">// the reliable fallback when no other profile is recognized by the current
+</span>            <span class="ActionScriptComment">// effects runtime.
+</span>            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">profile</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNode</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">node</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_PROFILE_COMMON_ELEMENT</span> <span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">profile</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">Logger</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">error</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">"Can't handle profiles other then profile_COMMON!"</span> <span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptReserved">return</span>;    
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptComment">// Declares a standard COLLADA image resource. 0 or more.
+</span>            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">images</span>:<span class="ActionScriptDefault_Text">XMLList</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNodeList</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">profile</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_IMAGE_ELEMENT</span> <span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptComment">// Creates a new parameter from a constrained set of
+</span>            <span class="ActionScriptComment">// types recognizable by all platforms &lt;float&gt;,
+</span>            <span class="ActionScriptComment">// &lt;float2&gt;, &lt;float3&gt;, &lt;float4&gt;, &lt;surface&gt;, and
+</span>            <span class="ActionScriptComment">// &lt;sampler2D&gt;, with an additional semantic. 0 or more.
+</span>            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">newparams</span>:<span class="ActionScriptDefault_Text">XMLList</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNodeList</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">profile</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_FXCMN_NEWPARAM_ELEMENT</span> <span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptComment">// Declares the only technique for this effect. This node
+</span>            <span class="ActionScriptComment">// contains &lt;asset&gt;, &lt;image&gt;, and &lt;extra&gt;, along
+</span>            <span class="ActionScriptComment">// with one of &lt;constant&gt;, &lt;lambert&gt;, &lt;phong&gt;, or
+</span>            <span class="ActionScriptComment">// &lt;blinn&gt;.
+</span>            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">technique</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNode</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">profile</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_TECHNIQUE_ELEMENT</span> <span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptComment">// check for a SID
+</span>            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">techSID</span>:<span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">technique</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">attribute</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_SID_ATTRIBUTE</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptDefault_Text">Logger</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">log</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">"reading effect: "</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">id</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">Logger</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">log</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">" =&gt; #images: "</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">images</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">Logger</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">log</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">" =&gt; #newparams: "</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">newparams</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">Logger</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">log</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">" =&gt; technique sid: "</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">techSID</span> <span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">newparams</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Object</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">for each</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">paramNode</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">newparams</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">p</span>:<span class="ActionScriptDefault_Text">DaeNewParam</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">DaeNewParam</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">document</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">paramNode</span> <span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">newparams</span><span class="ActionScriptBracket/Brace">[</span> <span class="ActionScriptDefault_Text">p</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">type</span> <span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">p</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+                    
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">phong</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNode</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">technique</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_FXSTD_PHONG_ELEMENT</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">lambert</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNode</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">technique</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_FXSTD_LAMBERT_ELEMENT</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">blinn</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNode</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">technique</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_FXSTD_BLINN_ELEMENT</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">constant</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNode</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">technique</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_FXSTD_CONSTANT_ELEMENT</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">phong</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">Logger</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">log</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">" =&gt; shader: phong"</span> <span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">color</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">DaePhong</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">document</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">phong</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">else</span> <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">lambert</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">Logger</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">log</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">" =&gt; shader: lambert"</span> <span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">color</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">DaeLambert</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">document</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">lambert</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">else</span> <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">blinn</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">Logger</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">log</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">" =&gt; shader: blinn"</span> <span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">color</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">DaeBlinn</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">document</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">blinn</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">else</span> <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">constant</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">Logger</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">log</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">" =&gt; shader: constant"</span> <span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">color</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">DaeConstant</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">document</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">constant</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">surface</span>:<span class="ActionScriptDefault_Text">DaeNewParam</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">newparams</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_FXCMN_SURFACE_ELEMENT</span><span class="ActionScriptBracket/Brace">]</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">sampler2D</span>:<span class="ActionScriptDefault_Text">DaeNewParam</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">newparams</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_FXCMN_SAMPLER2D_ELEMENT</span><span class="ActionScriptBracket/Brace">]</span>;
+            
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">ph</span>:<span class="ActionScriptDefault_Text">DaeLambert</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">color</span> <span class="ActionScriptReserved">as</span> <span class="ActionScriptDefault_Text">DaeLambert</span>;
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">ph</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">ph</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">diffuse</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">ph</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">diffuse</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">type</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptDefault_Text">DaeColorOrTexture</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">TYPE_TEXTURE</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">sampler2D</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">surface</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">sampler2D</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">sid</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptDefault_Text">ph</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">diffuse</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">texture</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">texture</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">sampler2D</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">sampler2D</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">source</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptDefault_Text">surface</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">sid</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptBracket/Brace">{</span>                        
+                    <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">texture_url</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">surface</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">surface</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">init_from</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptDefault_Text">readExtra</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">node</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">readExtra</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">node</span>:<span class="ActionScriptDefault_Text">XML</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">extraList</span>:<span class="ActionScriptDefault_Text">XMLList</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNodeList</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">node</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_EXTRA_ELEMENT</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptReserved">for each</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">extraNode</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">extraList</span><span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">techniqueNode</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNode</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">extraNode</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_TECHNIQUE_ELEMENT</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">profile</span>:<span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">techniqueNode</span><span class="ActionScriptOperator">.</span><span class="ActionScriptOperator">@</span><span class="ActionScriptDefault_Text">profile</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">toString</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">tmp</span>:<span class="ActionScriptDefault_Text">XML</span>;
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">text</span>:<span class="ActionScriptDefault_Text">String</span>;
+                
+                <span class="ActionScriptReserved">switch</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">profile</span><span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptString">"MAX3D"</span>:
+                        <span class="ActionScriptDefault_Text">tmp</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNode</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">techniqueNode</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptString">"double_sided"</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">tmp</span><span class="ActionScriptBracket/Brace">)</span>
+                        <span class="ActionScriptBracket/Brace">{</span>
+                            <span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNodeContent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">tmp</span><span class="ActionScriptBracket/Brace">)</span>;
+                            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">double_sided</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptString">"1"</span> <span class="ActionScriptOperator">||</span> <span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptString">"true"</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptBracket/Brace">}</span>
+                        <span class="ActionScriptDefault_Text">tmp</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNode</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">techniqueNode</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptString">"wireframe"</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">tmp</span><span class="ActionScriptBracket/Brace">)</span>
+                        <span class="ActionScriptBracket/Brace">{</span>
+                            <span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNodeContent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">tmp</span><span class="ActionScriptBracket/Brace">)</span>;
+                            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">wireframe</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptString">"1"</span> <span class="ActionScriptOperator">||</span> <span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptString">"true"</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptBracket/Brace">}</span>
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptReserved">default</span>:
+                        <span class="ActionScriptReserved">break</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptBracket/Brace">}</span>    
+<span class="ActionScriptBracket/Brace">}</span>
+</pre></body>
+</html>

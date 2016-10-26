@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Menu xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 dataProvider="{myMenuDP}"
+		 labelField="option" contentBackgroundColor="#00BB00" itemClick="handleItemClick(event)"
+		 horizontalCenter="0" borderColor="#BB0000" rollOverColor="#CC0000" filters="{[glowFilter]}">
+	
+	<fx:Metadata>
+		[Event(name=Constants.GOTOINTRO, type="events.modEvent")]
+	</fx:Metadata>
+	
+	<fx:Declarations>
+		<!--This filter is for the red glow that surrounds the pop-up menu box -->
+		<mx:GlowFilter id="glowFilter" color="#EE0000" blurX="30" blurY="30" alpha=".6"/>
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.Constants;
+			import com.Intro.Intro;
+			
+			import events.modEvent;
+			
+			import interfaces.IntroInterface;
+			
+			import mods.IntroScreen;
+			
+			import mx.collections.ArrayCollection;
+			import mx.events.MenuEvent;
+			
+			// Create a bindable menu arraycollection that houses the options for the buttons.
+			// This will generate the "call" command, which is essentially firing a menuEvent called handleItemClick
+			// with the parameter event of the selected menu option.
+			[Bindable]
+			public var myMenuDP:ArrayCollection = new ArrayCollection(
+				[ 
+					//{option:"Game Options", call:Constants.GOTOOPTIONS },
+					{option:"Help", call:Constants.GOTOHELP},{option:"Exit Menu"} ]);
+			
+			public function handleItemClick(event:MenuEvent):void
+			{
+				// This function will take the clicked menu call, and fire a module event based on the module.
+				// If there is no call (resume) then it will simply unpause the game.
+				switch (event.item.call) {
+					//case Constants.GOTOOPTIONS :
+						//Interface.showOptions();
+					//	break;
+					case Constants.GOTOHELP :
+						(parent as IntroInterface).showHelp(); 
+						break; 
+				}
+			}
+			
+		]]>
+	</fx:Script>
+</mx:Menu>

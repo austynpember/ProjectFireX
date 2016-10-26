@@ -1,0 +1,270 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>DaeCamera.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptComment">/*
+ * Copyright 2007 (c) Tim Knip, ascollada.org.
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */</span>
+ 
+<span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ascollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span> <span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ascollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ASCollada</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ascollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DaeEntity</span>;    
+
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">DaeCamera</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">DaeEntity</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">TYPE_X</span>:<span class="ActionScriptDefault_Text">uint</span> <span class="ActionScriptOperator">=</span> 0;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">TYPE_Y</span>:<span class="ActionScriptDefault_Text">uint</span> <span class="ActionScriptOperator">=</span> 1;
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">ortho</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">fov</span>:<span class="ActionScriptDefault_Text">Number</span>;
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">mag</span>:<span class="ActionScriptDefault_Text">Number</span>;
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">aspect_ratio</span>:<span class="ActionScriptDefault_Text">Number</span>;
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">near</span>:<span class="ActionScriptDefault_Text">Number</span>;
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">far</span>:<span class="ActionScriptDefault_Text">Number</span>;
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">target</span>:<span class="ActionScriptDefault_Text">String</span>;
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">type</span>:<span class="ActionScriptDefault_Text">uint</span> <span class="ActionScriptOperator">=</span> 0;
+        
+        <span class="ActionScriptASDoc">/**
+         * 
+         * @param    node
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">DaeCamera</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">document</span> : <span class="ActionScriptDefault_Text">DaeDocument</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">node</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">super</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">document</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">node</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * 
+         * @param    node
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">read</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">node</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>                            
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">node</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">localName</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_CAMERA_ELEMENT</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptReserved">throw</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Error</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">"expected a '"</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_CAMERA_ELEMENT</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptString">"' element"</span> <span class="ActionScriptBracket/Brace">)</span>;
+                
+            <span class="ActionScriptReserved">super</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">read</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">node</span> <span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">target</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+            
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">children</span>:<span class="ActionScriptDefault_Text">XMLList</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">node</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">children</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">numChildren</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">children</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptReserved">for</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">numChildren</span>; <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">++</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">child</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">children</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>;
+                
+                <span class="ActionScriptReserved">switch</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">String</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">localName</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_OPTICS_ELEMENT</span>:
+                        <span class="ActionScriptDefault_Text">readOptics</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_EXTRA_ELEMENT</span>:
+                        <span class="ActionScriptDefault_Text">readExtra</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptReserved">default</span>:
+                        <span class="ActionScriptReserved">break</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * 
+         * @param    node
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">readOptics</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">node</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">children</span>:<span class="ActionScriptDefault_Text">XMLList</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">node</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">children</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">numChildren</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">children</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptReserved">for</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">numChildren</span>; <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">++</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">child</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">children</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>;
+                
+                <span class="ActionScriptReserved">switch</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">String</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">localName</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_TECHNIQUE_COMMON_ELEMENT</span>:
+                        <span class="ActionScriptDefault_Text">readTechniqueCommon</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptReserved">default</span>:
+                        <span class="ActionScriptReserved">break</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * 
+         * @param    node
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">readTechniqueCommon</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">node</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">children</span>:<span class="ActionScriptDefault_Text">XMLList</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">node</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">children</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">numChildren</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">children</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptReserved">for</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">numChildren</span>; <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">++</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">child</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">children</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>;
+                
+                <span class="ActionScriptReserved">switch</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">String</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">localName</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_CAMERA_PERSP_ELEMENT</span>:
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ortho</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+                        <span class="ActionScriptDefault_Text">readPerspective</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_CAMERA_ORTHO_ELEMENT</span>:
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ortho</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">true</span>;
+                        <span class="ActionScriptDefault_Text">readOrthogonal</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptReserved">default</span>:
+                        <span class="ActionScriptReserved">break</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * 
+         * @param    node
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">readPerspective</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">node</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">children</span>:<span class="ActionScriptDefault_Text">XMLList</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">node</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">children</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">numChildren</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">children</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptReserved">for</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">numChildren</span>; <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">++</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">child</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">children</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>;
+                
+                <span class="ActionScriptReserved">switch</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">String</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">localName</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_XFOV_CAMERA_PARAMETER</span>:
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">type</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">TYPE_X</span>;
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">fov</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">parseFloat</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">getNodeContent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>; 
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_YFOV_CAMERA_PARAMETER</span>:
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">type</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">TYPE_Y</span>;
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">fov</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">parseFloat</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">getNodeContent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>; 
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_ASPECT_CAMERA_PARAMETER</span>:
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">aspect_ratio</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">parseFloat</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">getNodeContent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>; 
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_ZNEAR_CAMERA_PARAMETER</span>:
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">near</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">parseFloat</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">getNodeContent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>; 
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_ZFAR_CAMERA_PARAMETER</span>:
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">far</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">parseFloat</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">getNodeContent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>; 
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptReserved">default</span>:
+                        <span class="ActionScriptReserved">break</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * 
+         * @param    node
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">readOrthogonal</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">node</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">children</span>:<span class="ActionScriptDefault_Text">XMLList</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">node</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">children</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">numChildren</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">children</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptReserved">for</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">numChildren</span>; <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">++</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">child</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">children</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>;
+                
+                <span class="ActionScriptReserved">switch</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">String</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">localName</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_XMAG_CAMERA_PARAMETER</span>:
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">type</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">TYPE_X</span>;
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">fov</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">parseFloat</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">getNodeContent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>; 
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_YMAG_CAMERA_PARAMETER</span>:
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">type</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">TYPE_Y</span>;
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">fov</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">parseFloat</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">getNodeContent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>; 
+                        <span class="ActionScriptReserved">break</span>;    
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_ASPECT_CAMERA_PARAMETER</span>:
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">aspect_ratio</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">parseFloat</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">getNodeContent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>; 
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_ZNEAR_CAMERA_PARAMETER</span>:
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">near</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">parseFloat</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">getNodeContent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>; 
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_ZFAR_CAMERA_PARAMETER</span>:
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">far</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">parseFloat</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">getNodeContent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>; 
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptReserved">default</span>:
+                        <span class="ActionScriptReserved">break</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * 
+         * @param    node
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">readExtra</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">node</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">children</span>:<span class="ActionScriptDefault_Text">XMLList</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">node</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">children</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">numChildren</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">children</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptReserved">for</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">numChildren</span>; <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">++</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">child</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">children</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>;
+                
+                <span class="ActionScriptReserved">switch</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">String</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">localName</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_TECHNIQUE_ELEMENT</span>:
+                        <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">c</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNode</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAEMAX_TARGET_CAMERA_PARAMETER</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">c</span> <span class="ActionScriptBracket/Brace">)</span>
+                        <span class="ActionScriptBracket/Brace">{</span>
+                            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">target</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNodeContent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">c</span><span class="ActionScriptBracket/Brace">)</span>;
+                            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">target</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">target</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">split</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"#"</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">[</span>1<span class="ActionScriptBracket/Brace">]</span>;
+                        <span class="ActionScriptBracket/Brace">}</span>
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptReserved">default</span>:
+                        <span class="ActionScriptReserved">break</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span>
+</pre></body>
+</html>

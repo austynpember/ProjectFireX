@@ -1,0 +1,66 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>BitmapMaterialTools.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">materials</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">utils</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">display</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Bitmap</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">display</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">BitmapData</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Matrix</span>;
+    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">materials</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">BitmapMaterial</span>;
+
+    
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">BitmapMaterialTools</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">createBitmapMaterial</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">bitmapClass</span>:<span class="ActionScriptDefault_Text">Class</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">oneSided</span>:<span class="ActionScriptDefault_Text">Boolean</span><span class="ActionScriptOperator">=</span><span class="ActionScriptReserved">true</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">BitmapMaterial</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">texture</span>:<span class="ActionScriptDefault_Text">BitmapData</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getTexture</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">bitmapClass</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">material</span>:<span class="ActionScriptDefault_Text">BitmapMaterial</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">BitmapMaterial</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">texture</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">material</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">oneSide</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">oneSided</span>;
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">material</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">getTexture</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">bitmapClass</span>:<span class="ActionScriptDefault_Text">Class</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">BitmapData</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">bm</span>:<span class="ActionScriptDefault_Text">Bitmap</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">Bitmap</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">bitmapClass</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">texture</span>  :<span class="ActionScriptDefault_Text">BitmapData</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">BitmapData</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">bm</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">width</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">bm</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">height</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">true</span><span class="ActionScriptOperator">,</span>0xFFFFFF<span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">texture</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">draw</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">bm</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Matrix</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">texture</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+
+        <span class="ActionScriptASDoc">/**
+         * Mirrors the bitmap over its X axis
+         * 
+         * @param    bitmap The bitmap to mirror.
+         */</span> 
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">mirrorBitmapX</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">bitmap</span>:<span class="ActionScriptDefault_Text">BitmapData</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">tmp</span>:<span class="ActionScriptDefault_Text">Bitmap</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Bitmap</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">bitmap</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">clone</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">tmp</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">scaleX</span> <span class="ActionScriptOperator">=</span> -1;
+            <span class="ActionScriptDefault_Text">tmp</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">bitmap</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">width</span>;
+            <span class="ActionScriptDefault_Text">bitmap</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">draw</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">tmp</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">tmp</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">transform</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">matrix</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">tmp</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">bitmapData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">dispose</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+                
+        <span class="ActionScriptASDoc">/**
+         * Mirrors the bitmap over its Y axis
+         * 
+         * @param    bitmap The bitmap to mirror.
+         */</span> 
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">mirrorBitmapY</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">bitmap</span>:<span class="ActionScriptDefault_Text">BitmapData</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">tmp</span>:<span class="ActionScriptDefault_Text">Bitmap</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Bitmap</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">bitmap</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">clone</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">tmp</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">scaleY</span> <span class="ActionScriptOperator">=</span> -1;
+            <span class="ActionScriptDefault_Text">tmp</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">bitmap</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">height</span>;
+            <span class="ActionScriptDefault_Text">bitmap</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">draw</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">tmp</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">tmp</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">transform</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">matrix</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">tmp</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">bitmapData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">dispose</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>

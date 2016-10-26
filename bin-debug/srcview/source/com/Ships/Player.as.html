@@ -1,0 +1,281 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Player.as</title>
+<link rel="stylesheet" type="text/css" href="../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">com</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Ships</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">com</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Constants</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">com</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Objects</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">flyingObjs</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">projectile</span><span class="ActionScriptOperator">.</span><span class="ActionScriptOperator">*</span>;
+    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">events</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DamageEvent</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">events</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">LevelEvent</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">events</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">NukeEvent</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">events</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">WeaponEvent</span>;
+    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">math</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Number3D</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">materials</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ColorMaterial</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">materials</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">utils</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MaterialsList</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">objects</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DisplayObject3D</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">objects</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">parsers</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">objects</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">primitives</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Cube</span>;
+    
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">Player</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">Ship</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptComment">// Model
+</span>        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_dae</span>:<span class="ActionScriptDefault_Text">DAE</span>;
+        <span class="ActionScriptASDoc">/** hitbox used as the Collision detection */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">hitbox</span>:<span class="ActionScriptDefault_Text">Cube</span>;
+        
+        <span class="ActionScriptComment">// Movement
+</span>        <span class="ActionScriptReserved">private</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">_speed</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> .97;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">_friction</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 0.9;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">_maxspeed</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 10;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_vx</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 0;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_vy</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 0;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_lastPos</span>:<span class="ActionScriptDefault_Text">Number3D</span>;
+        
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_paused</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+        <span class="ActionScriptComment">//  ***  Weapons  *** //
+</span>        <span class="ActionScriptComment">// Vector to cycle through weapons based on effectiveness and power
+</span>        <span class="ActionScriptReserved">private</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_weaponArray</span>:<span class="ActionScriptDefault_Text">Array</span>;
+        <span class="ActionScriptComment">// This basic weapon will tell the space bar which type of weapon to fire
+</span>        <span class="ActionScriptASDoc">/**  This basic weapon will tell the space bar which type of weapon to fire */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">basicWeapon</span>:<span class="ActionScriptDefault_Text">String</span>;
+        <span class="ActionScriptComment">// This holds the place value for the weapon in the weapon array
+</span>        <span class="ActionScriptASDoc">/** This holds the place value for the weapon in the weapon array */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">currentWeaponPosition</span>:<span class="ActionScriptDefault_Text">int</span>;
+        
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_laserOne</span>:<span class="ActionScriptDefault_Text">LaserOne</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_laserTwo</span>:<span class="ActionScriptDefault_Text">LaserTwo</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_laserThree</span>:<span class="ActionScriptDefault_Text">LaserThree</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_beam</span>:<span class="ActionScriptDefault_Text">Beam</span>;
+        <span class="ActionScriptASDoc">/** This holds the number of nukes that we currently have */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">nukeNumber</span>:<span class="ActionScriptDefault_Text">int</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_nuke</span>:<span class="ActionScriptDefault_Text">Nuke</span>;
+        <span class="ActionScriptASDoc">/** This holds the timer at which we can fire a weapon - only %10 or 3.  Timer resets every release of spacebar*/</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">normalTimer</span>:<span class="ActionScriptDefault_Text">int</span>;
+        
+        <span class="ActionScriptComment">// Movement
+</span>        <span class="ActionScriptReserved">private</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">LEFT_BORDER</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> -210;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">RIGHT_BORDER</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 210;
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">leftPressed</span>:<span class="ActionScriptDefault_Text">Boolean</span>;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">rightPressed</span>:<span class="ActionScriptDefault_Text">Boolean</span>;
+        <span class="ActionScriptASDoc">/**  Basic weapon key press */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">normalPressed</span>:<span class="ActionScriptDefault_Text">Boolean</span>;
+        
+        <span class="ActionScriptComment">// Material for the player hitbox (set to invisible)
+</span>        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_cm</span>:<span class="ActionScriptDefault_Text">ColorMaterial</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">ColorMaterial</span><span class="ActionScriptBracket/Brace">(</span>0x0000FF<span class="ActionScriptOperator">,</span>0<span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_ml</span>:<span class="ActionScriptDefault_Text">MaterialsList</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">MaterialsList</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptASDoc">/**
+         * This is the players ship that you control.  The constructor sets up the model, then the hitbox.  It sets the current
+         * weapon to the parameter, and then creates the WeaponArray which is an array to go through weapons
+         *  based on your weapon power up.  Then set up the number of nukes based on the parameter and startMoving.
+         * @param gameContainer @param weapon @param nuke
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">Player</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">gameContainer</span>:<span class="ActionScriptDefault_Text">DisplayObject3D</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">weapon</span>:<span class="ActionScriptDefault_Text">int</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">nuke</span>:<span class="ActionScriptDefault_Text">int</span><span class="ActionScriptBracket/Brace">)</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">super</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptComment">// Model
+</span>            <span class="ActionScriptDefault_Text">_container</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">gameContainer</span>;
+            <span class="ActionScriptDefault_Text">_dae</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">DAE</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">_dae</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">load</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"com/assets/player1.dae"</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">_dae</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">scale</span> <span class="ActionScriptOperator">=</span> 7;
+            <span class="ActionScriptDefault_Text">addChild</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_dae</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptComment">// Hitbox
+</span>            <span class="ActionScriptDefault_Text">_ml</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">addMaterial</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_cm</span><span class="ActionScriptOperator">,</span><span class="ActionScriptString">"all"</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">hitbox</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Cube</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_ml</span><span class="ActionScriptOperator">,</span>40<span class="ActionScriptOperator">,</span>40<span class="ActionScriptOperator">,</span>40<span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">hitbox</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">position</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">position</span>;
+            <span class="ActionScriptDefault_Text">_container</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">addChild</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">hitbox</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptComment">// Weapon set up
+</span>            <span class="ActionScriptDefault_Text">currentWeaponPosition</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">weapon</span>;
+            <span class="ActionScriptDefault_Text">createWeaponArray</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">nukeNumber</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">nuke</span>;
+            
+            <span class="ActionScriptDefault_Text">_lastPos</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Number3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">startMoving</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">createWeaponArray</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptComment">// This will set the basic weapon to the current weapon position in this list.
+</span>            <span class="ActionScriptDefault_Text">_weaponArray</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">(</span>
+                <span class="ActionScriptBracket/Brace">{</span><span class="ActionScriptDefault_Text">type</span>:<span class="ActionScriptDefault_Text">Constants</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">LASERONE</span><span class="ActionScriptBracket/Brace">}</span><span class="ActionScriptOperator">,</span>
+                <span class="ActionScriptBracket/Brace">{</span><span class="ActionScriptDefault_Text">type</span>:<span class="ActionScriptDefault_Text">Constants</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">LASERTWO</span><span class="ActionScriptBracket/Brace">}</span><span class="ActionScriptOperator">,</span>
+                <span class="ActionScriptBracket/Brace">{</span><span class="ActionScriptDefault_Text">type</span>:<span class="ActionScriptDefault_Text">Constants</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">LASERTHREE</span><span class="ActionScriptBracket/Brace">}</span><span class="ActionScriptOperator">,</span>
+                <span class="ActionScriptBracket/Brace">{</span><span class="ActionScriptDefault_Text">type</span>:<span class="ActionScriptDefault_Text">Constants</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">BEAM</span><span class="ActionScriptBracket/Brace">}</span>
+                <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">weaponObject</span>:<span class="ActionScriptDefault_Text">Object</span> <span class="ActionScriptOperator">=</span>  <span class="ActionScriptDefault_Text">_weaponArray</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">currentWeaponPosition</span><span class="ActionScriptBracket/Brace">]</span>;
+            <span class="ActionScriptDefault_Text">basicWeapon</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">weaponObject</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">type</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptASDoc">/**
+         * Update Player. If a directional flag is pressed, move in that direction (unless beyond X=210 limits.)
+         * Apply friction to movement.  Swivel the ship.  Make sure you don't go over a maxspeed.
+         * Update the current Position of ship, centering it for weapon creation.  
+         * Check if the space is pressed, if it is - start it's timer and fire the current weapon every half second.
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">override</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">update</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span> 
+            <span class="ActionScriptComment">// Movement
+</span>            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">leftPressed</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">&gt;</span> <span class="ActionScriptDefault_Text">LEFT_BORDER</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">_vx</span> <span class="ActionScriptOperator">-=</span> <span class="ActionScriptDefault_Text">_speed</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">rightPressed</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">RIGHT_BORDER</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">_vx</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptDefault_Text">_speed</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptDefault_Text">_vx</span> <span class="ActionScriptOperator">*=</span> <span class="ActionScriptDefault_Text">_friction</span>;
+            
+            <span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptDefault_Text">_vx</span>;
+
+            <span class="ActionScriptComment">//Update swivel of ship
+</span>            <span class="ActionScriptDefault_Text">rotationZ</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptOperator">-</span><span class="ActionScriptDefault_Text">_vx</span>;
+            
+            <span class="ActionScriptComment">//Make sure ship doesn't go over maxspeed.
+</span>            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_vx</span> <span class="ActionScriptOperator">&gt;</span> <span class="ActionScriptDefault_Text">_maxspeed</span><span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptDefault_Text">_vx</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">_maxspeed</span>;
+            <span class="ActionScriptReserved">else</span> <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_vx</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptOperator">-</span><span class="ActionScriptDefault_Text">_maxspeed</span><span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptDefault_Text">_vx</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptOperator">-</span><span class="ActionScriptDefault_Text">_maxspeed</span>;
+            
+            <span class="ActionScriptComment">//Update the current Position of ship, centering it for weapon creation
+</span>            <span class="ActionScriptDefault_Text">_lastPos</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">-</span> 18;
+            <span class="ActionScriptDefault_Text">_lastPos</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">y</span> <span class="ActionScriptOperator">+</span> 24;
+            <span class="ActionScriptDefault_Text">_lastPos</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">z</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">z</span> <span class="ActionScriptOperator">+</span> 44;
+            
+            <span class="ActionScriptDefault_Text">hitbox</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">position</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">position</span>;
+            
+            <span class="ActionScriptComment">// Weapons
+</span>            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">normalPressed</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">normalTimer</span><span class="ActionScriptOperator">++</span>;
+                
+                <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">normalTimer</span> <span class="ActionScriptOperator">%</span> 10 <span class="ActionScriptOperator">==</span> 0 <span class="ActionScriptOperator">||</span> <span class="ActionScriptDefault_Text">normalTimer</span> <span class="ActionScriptOperator">==</span> 3<span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptDefault_Text">fireCurrentWeapon</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptDefault_Text">checkCollision</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+        <span class="ActionScriptBracket/Brace">}</span> <span class="ActionScriptComment">// END UPDATE
+</span>        <span class="ActionScriptASDoc">/**
+         * Fire the secondary weapon (nuke).  First check if you have a nuke in your arsenal.
+         * Make a new nuke at the _lastPos, and get rid of your nuke number.  Then fire off a NukeEvent which
+         * fires to gameController &gt; PFX &gt; Interface and removes a nuke icon.
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">fireSecondaryWeapon</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">nukeNumber</span> <span class="ActionScriptOperator">!=</span> 0<span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">_nuke</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Nuke</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastPos</span><span class="ActionScriptOperator">,</span><span class="ActionScriptDefault_Text">_container</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">nukeNumber</span> <span class="ActionScriptOperator">--</span>;
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">eventObj</span>:<span class="ActionScriptDefault_Text">NukeEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">NukeEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">Constants</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">NUKE</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">eventObj</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Nuke</span> <span class="ActionScriptOperator">=</span> -1;
+                <span class="ActionScriptDefault_Text">_container</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">eventObj</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptASDoc">/**
+         * Fires the weapon that is current.  Switch statement based on the number gathered from the weapon array.
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">fireCurrentWeapon</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptComment">// Find out Which weapon is currently selected and create the projectile for it.
+</span>            <span class="ActionScriptReserved">switch</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">basicWeapon</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptReserved">case</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">Constants</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">LASERONE</span><span class="ActionScriptBracket/Brace">)</span> :
+                    <span class="ActionScriptDefault_Text">_laserOne</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">LaserOne</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastPos</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_container</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptReserved">break</span>;
+                
+                <span class="ActionScriptReserved">case</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">Constants</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">LASERTWO</span><span class="ActionScriptBracket/Brace">)</span> :
+                    <span class="ActionScriptDefault_Text">_laserTwo</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">LaserTwo</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastPos</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_container</span><span class="ActionScriptOperator">,</span> 0<span class="ActionScriptOperator">,</span> 0<span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptReserved">break</span>;    
+                
+                <span class="ActionScriptReserved">case</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">Constants</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">LASERTHREE</span><span class="ActionScriptBracket/Brace">)</span> :
+                    <span class="ActionScriptDefault_Text">_laserThree</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">LaserThree</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastPos</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_container</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptReserved">break</span>;    
+                
+                <span class="ActionScriptReserved">case</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">Constants</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">BEAM</span><span class="ActionScriptBracket/Brace">)</span> :
+                    <span class="ActionScriptDefault_Text">_beam</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Beam</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastPos</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_container</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptReserved">break</span>;    
+                
+                <span class="ActionScriptReserved">default</span> :
+                    <span class="ActionScripttrace">trace</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"Incorrect Weapon type"</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span> <span class="ActionScriptComment">// END SWITCH
+</span>        <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptASDoc">/**
+         * Changes weapon with parameter called from hitting an Item.  If we are not at max or min weapon level, 
+         * increase/decrease currentweapon position. Calls to the weapon array.
+         * @param weapon
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">changeBasicWeapon</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">weapon</span>:<span class="ActionScriptDefault_Text">int</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">switch</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">weapon</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptReserved">case</span> 1 :
+                    <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">currentWeaponPosition</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptDefault_Text">_weaponArray</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span> <span class="ActionScriptOperator">-</span>1<span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                        <span class="ActionScriptDefault_Text">currentWeaponPosition</span> <span class="ActionScriptOperator">++</span>;
+                        <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">weaponObjectUp</span>:<span class="ActionScriptDefault_Text">Object</span> <span class="ActionScriptOperator">=</span>  <span class="ActionScriptDefault_Text">_weaponArray</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">currentWeaponPosition</span><span class="ActionScriptBracket/Brace">]</span>;
+                        <span class="ActionScriptDefault_Text">basicWeapon</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">weaponObjectUp</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">type</span>;
+                    <span class="ActionScriptBracket/Brace">}</span>
+                    <span class="ActionScriptReserved">break</span>;
+
+                <span class="ActionScriptReserved">case</span> <span class="ActionScriptOperator">-</span>1 : 
+                    <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">currentWeaponPosition</span> <span class="ActionScriptOperator">!=</span> 0<span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                        <span class="ActionScriptDefault_Text">currentWeaponPosition</span> <span class="ActionScriptOperator">--</span>;
+                        <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">weaponObjectDown</span>:<span class="ActionScriptDefault_Text">Object</span> <span class="ActionScriptOperator">=</span>  <span class="ActionScriptDefault_Text">_weaponArray</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">currentWeaponPosition</span><span class="ActionScriptBracket/Brace">]</span>;
+                        <span class="ActionScriptDefault_Text">basicWeapon</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">weaponObjectDown</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">type</span>;
+                    <span class="ActionScriptBracket/Brace">}</span>
+                    <span class="ActionScriptReserved">break</span>;
+                <span class="ActionScriptReserved">default</span> :
+                    <span class="ActionScripttrace">trace</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"Changed to no weapon"</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span> <span class="ActionScriptComment">// END SWITCH
+</span>        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">dispatchWeaponEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">eventObj</span>:<span class="ActionScriptDefault_Text">WeaponEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">WeaponEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">Constants</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">WPN</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">eventObj</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">weaponNumber</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">currentWeaponPosition</span>;
+            <span class="ActionScriptDefault_Text">_container</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">eventObj</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">checkCollision</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">for each</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">nextEnemyProjectile</span>:<span class="ActionScriptDefault_Text">EnemyProjectile</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">EnemyProjectile</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">registry</span><span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">nextEnemyProjectile</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">particles3D</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptReserved">null</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                     <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">hitbox</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">hitTestObject</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">nextEnemyProjectile</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">particles3D</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                        <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">eventObj</span>:<span class="ActionScriptDefault_Text">DamageEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">DamageEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">Constants</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DMG</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptDefault_Text">eventObj</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">damage</span> <span class="ActionScriptOperator">=</span> 1;
+                        <span class="ActionScriptDefault_Text">_container</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">eventObj</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptDefault_Text">nextEnemyProjectile</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">animateHit</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptBracket/Brace">}</span>
+                <span class="ActionScriptBracket/Brace">}</span>
+                <span class="ActionScriptReserved">else</span> <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">nextEnemyProjectile</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">plane</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptReserved">null</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">hitbox</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">hitTestPoint</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">nextEnemyProjectile</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">plane</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span><span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span><span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">z</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                        <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">eventObj2</span>:<span class="ActionScriptDefault_Text">DamageEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">DamageEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">Constants</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DMG</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptDefault_Text">eventObj2</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">damage</span> <span class="ActionScriptOperator">=</span> 1;
+                        <span class="ActionScriptDefault_Text">_container</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">eventObj2</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptBracket/Brace">}</span>
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span> <span class="ActionScriptComment">// END FOR
+</span>        <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptASDoc">/**
+         * Destroys this Ship.  Stops this from moving(updating.)
+         * Finds the position in the Registry and splices it out. Unregisters all materials.
+         * Removes objects from the container to disconnect from display tree.
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">override</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">destroy</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScripttrace">trace</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"In player Destroy"</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">stopMoving</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">position</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">Ship</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">registry</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">indexOf</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">,</span>0<span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">Ship</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">registry</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">splice</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">position</span><span class="ActionScriptOperator">,</span>1<span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">_cm</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">unregisterObject</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">hitbox</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">_container</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">removeChild</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">hitbox</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">_container</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">removeChild</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">this</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>

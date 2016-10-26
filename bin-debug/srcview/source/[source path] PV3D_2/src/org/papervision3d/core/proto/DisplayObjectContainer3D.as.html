@@ -1,0 +1,238 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>DisplayObjectContainer3D.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">proto</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">events</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">EventDispatcher</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">utils</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Dictionary</span>;
+    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">log</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">PaperLogger</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">objects</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DisplayObject3D</span>;
+    
+    <span class="ActionScriptASDoc">/**
+    * The DisplayObjectContainer3D class is the base class for all objects that can serve as DisplayObject3D containers.
+    * &lt;p/&gt;
+    * Each DisplayObjectContainer3D object has its own child list.
+    */</span>
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">DisplayObjectContainer3D</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">EventDispatcher</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptASDoc">/**
+        * [read-only] [read-only] The scene, which is the top-most displayObjectContainer3D in the tree structure.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">root</span> :<span class="ActionScriptDefault_Text">DisplayObjectContainer3D</span>;
+        
+        <span class="ActionScriptASDoc">/**
+        * [internal-use] Names indexed by children.
+        */</span>
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_children</span>       :<span class="ActionScriptDefault_Text">Dictionary</span>;
+    
+        <span class="ActionScriptASDoc">/**
+        * [internal-use] Children indexed by name.
+        */</span>
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_childrenByName</span> :<span class="ActionScriptDefault_Text">Object</span>;
+    
+        <span class="ActionScriptReserved">private</span>   <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_childrenTotal</span>  :<span class="ActionScriptDefault_Text">int</span>;
+        
+
+        <span class="ActionScriptASDoc">/**
+        * Creates a new DisplayObjectContainer3D object.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">DisplayObjectContainer3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">_children</span>       <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Dictionary</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptReserved">false</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">_childrenByName</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Dictionary</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptReserved">true</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">_childrenTotal</span>  <span class="ActionScriptOperator">=</span> 0;
+        <span class="ActionScriptBracket/Brace">}</span>
+    
+        <span class="ActionScriptASDoc">/**
+        * Adds a child DisplayObject3D instance to this DisplayObjectContainer instance.
+        *
+        * [TODO: If you add a child object that already has a different display object container as a parent, the object is removed from the child list of the other display object container.]
+        *
+        * @param    child    The DisplayObject3D instance to add as a child of this DisplayObjectContainer3D instance.
+        * @param    name    An optional name of the child to add or create. If no name is provided, the child name will be used.
+        * @return    The DisplayObject3D instance that you have added or created.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">addChild</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">child</span> :<span class="ActionScriptDefault_Text">DisplayObject3D</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">name</span>:<span class="ActionScriptDefault_Text">String</span><span class="ActionScriptOperator">=</span><span class="ActionScriptReserved">null</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">DisplayObject3D</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">parent</span><span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">PaperLogger</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">error</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"DisplayObjectContainer.addChild : DisplayObject3D already has a parent, ie is already added to scene."</span><span class="ActionScriptBracket/Brace">)</span>; 
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptComment">// Choose name
+</span>            <span class="ActionScriptDefault_Text">name</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">name</span> <span class="ActionScriptOperator">||</span> <span class="ActionScriptDefault_Text">child</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">name</span> <span class="ActionScriptOperator">||</span> <span class="ActionScriptDefault_Text">String</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">child</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">id</span> <span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">_children</span><span class="ActionScriptBracket/Brace">[</span> <span class="ActionScriptDefault_Text">child</span> <span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">name</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">_childrenByName</span><span class="ActionScriptBracket/Brace">[</span> <span class="ActionScriptDefault_Text">name</span> <span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">child</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">_childrenTotal</span><span class="ActionScriptOperator">++</span>;
+    
+            <span class="ActionScriptDefault_Text">child</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">parent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">this</span>;
+            <span class="ActionScriptDefault_Text">child</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">root</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">root</span>;
+    
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">child</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    
+    
+        <span class="ActionScriptASDoc">/**
+        * Adds all the children of a DisplayObject3D instance to this DisplayObjectContainer instance.
+        *
+        * @param    child    The DisplayObjectContainer3D instance that contains the children to add.
+        * @return    The DisplayObject3D instance that you have added or created.
+        */</span>
+    
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">addChildren</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">parent</span> :<span class="ActionScriptDefault_Text">DisplayObject3D</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">DisplayObjectContainer3D</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">for each</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">child</span>:<span class="ActionScriptDefault_Text">DisplayObject3D</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">parent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">children</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">parent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">removeChild</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">child</span> <span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">addChild</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">child</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+    
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">this</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    
+    
+    
+        <span class="ActionScriptASDoc">/**
+        * Removes the specified child DisplayObject3D instance from the child list of the DisplayObjectContainer3D instance.
+        * &lt;/p&gt;
+        * [TODO: The parent property of the removed child is set to null, and the object is garbage collected if no other references to the child exist.]
+        * &lt;/p&gt;
+        * The garbage collector is the process by which Flash Player reallocates unused memory space. When a variable or object is no longer actively referenced or stored somewhere, the garbage collector sweeps through and wipes out the memory space it used to occupy if no other references to it exist.
+        * &lt;/p&gt;
+        * @param    child    The DisplayObject3D instance to remove.
+        * @return    The DisplayObject3D instance that you pass in the child parameter.
+        */</span>
+    
+        <span class="ActionScriptASDoc">/**
+        * @public
+        * Added from Bug #10 by John Grden 8/22/2007
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">removeChild</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">child</span>:<span class="ActionScriptDefault_Text">DisplayObject3D</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">DisplayObject3D</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptComment">//removeChildByname(name:string) may return null // must check here
+</span>            
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">child</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">_children</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">child</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptReserved">delete</span> <span class="ActionScriptDefault_Text">_childrenByName</span><span class="ActionScriptBracket/Brace">[</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">_children</span><span class="ActionScriptBracket/Brace">[</span> <span class="ActionScriptDefault_Text">child</span> <span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptBracket/Brace">]</span>;
+                <span class="ActionScriptReserved">delete</span> <span class="ActionScriptDefault_Text">_children</span><span class="ActionScriptBracket/Brace">[</span> <span class="ActionScriptDefault_Text">child</span> <span class="ActionScriptBracket/Brace">]</span>;
+            
+                <span class="ActionScriptDefault_Text">child</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">parent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+                <span class="ActionScriptDefault_Text">child</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">root</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+                
+                <span class="ActionScriptDefault_Text">_childrenTotal</span><span class="ActionScriptOperator">--</span>;
+                
+                <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">child</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">null</span>;
+            
+        <span class="ActionScriptBracket/Brace">}</span>
+    
+        <span class="ActionScriptASDoc">/**
+        * Returns the child display object that exists with the specified name.
+        * &lt;/p&gt;
+        * If more that one child display object has the specified name, the method returns the first object in the child list.
+        * &lt;/p&gt;
+        * @param    name    The name of the child to return.* 
+        * @return    The child display object with the specified name.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">getChildByName</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">name</span>:<span class="ActionScriptDefault_Text">String</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">recursive</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">DisplayObject3D</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">recursive</span><span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">findChildByName</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">name</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">else</span>
+                <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">_childrenByName</span><span class="ActionScriptBracket/Brace">[</span> <span class="ActionScriptDefault_Text">name</span> <span class="ActionScriptBracket/Brace">]</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    
+    
+        <span class="ActionScriptASDoc">/**
+        * Removes the child DisplayObject3D instance that exists with the specified name, from the child list of the DisplayObjectContainer3D instance.
+        * &lt;/p&gt;
+        * If more that one child display object has the specified name, the method removes the first object in the child list.
+        * &lt;/p&gt;
+        * [TODO: The parent property of the removed child is set to null, and the object is garbage collected if no other references to the child exist.]
+        * &lt;/p&gt;
+        * The garbage collector is the process by which Flash Player reallocates unused memory space. When a variable or object is no longer actively referenced or stored somewhere, the garbage collector sweeps through and wipes out the memory space it used to occupy if no other references to it exist.
+        * &lt;/p&gt;
+        * @param    name    The name of the child to remove.
+        * @return    The DisplayObject3D instance that was removed.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">removeChildByName</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">name</span>:<span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">DisplayObject3D</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">removeChild</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">getChildByName</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">name</span> <span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    
+        <span class="ActionScriptASDoc">/**
+        * Returns a string value with the list of objects.
+        *
+        * @return    A string.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">override</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">toString</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">String</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">childrenList</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+        * Returns a string value with the list of objects.
+        *
+        * @return    A string.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">childrenList</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">String</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">list</span>:<span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptString">""</span>;
+    
+            <span class="ActionScriptReserved">for</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">name</span>:<span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">_children</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptDefault_Text">list</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptDefault_Text">name</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptString">"\n"</span>;
+    
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">list</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Recursively finds a child by its name.
+         * 
+         * @param    name
+         * @param    parent
+         * 
+         * @return     The found child.
+         */</span> 
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">findChildByName</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">name</span>:<span class="ActionScriptDefault_Text">String</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">parent</span>:<span class="ActionScriptDefault_Text">DisplayObject3D</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">DisplayObject3D</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">parent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">parent</span> <span class="ActionScriptOperator">||</span> <span class="ActionScriptDefault_Text">DisplayObject3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">this</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">parent</span><span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">null</span>;
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">parent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">name</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptDefault_Text">name</span><span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">parent</span>;
+            <span class="ActionScriptReserved">for each</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">child</span>:<span class="ActionScriptDefault_Text">DisplayObject3D</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">parent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">children</span><span class="ActionScriptBracket/Brace">)</span>    
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">obj</span>:<span class="ActionScriptDefault_Text">DisplayObject3D</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">findChildByName</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">name</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">child</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">obj</span><span class="ActionScriptBracket/Brace">)</span> 
+                    <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">obj</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">null</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+        * Returns the number of children of this object.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">get</span> <span class="ActionScriptDefault_Text">numChildren</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">int</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">_childrenTotal</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    
+        <span class="ActionScriptASDoc">/**
+        * Returns the children object.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">get</span> <span class="ActionScriptDefault_Text">children</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Object</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">_childrenByName</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>

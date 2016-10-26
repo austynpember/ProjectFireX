@@ -1,0 +1,66 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>ParticleField.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">objects</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">special</span> <span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Particles</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderables</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Particle</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">materials</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">special</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ParticleMaterial</span>;    
+
+    <span class="ActionScriptASDoc">/**
+     * @Author Ralph Hauwert
+     */</span>
+     
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">ParticleField</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">Particles</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">fieldDepth</span>:<span class="ActionScriptDefault_Text">Number</span>;
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">fieldHeight</span>:<span class="ActionScriptDefault_Text">Number</span>;
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">fieldWidth</span>:<span class="ActionScriptDefault_Text">Number</span>;
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">quantity</span>:<span class="ActionScriptDefault_Text">int</span>;        
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">color</span>:<span class="ActionScriptDefault_Text">int</span>;
+        
+        <span class="ActionScriptASDoc">/**
+        * The ParticleField class creates an object with an amount of particles randomly distributed over a specied 3d area.
+        * @param    material     The Material for the to be created particles
+        * @param    quantity    The number of particles in the field
+        * @param    particleSize    The size of the created particles
+        * @param    fieldWidth     The width of the area
+        * @param     fieldHeight The height of the area
+        * @param    fieldDepth    The depth of the area 
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">ParticleField</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">mat</span>:<span class="ActionScriptDefault_Text">ParticleMaterial</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">quantity</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 200<span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">particleSize</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptOperator">=</span>4<span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">fieldWidth</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 2000<span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">fieldHeight</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 2000<span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">fieldDepth</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 2000<span class="ActionScriptBracket/Brace">)</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">super</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"ParticleField"</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">material</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">mat</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">quantity</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">quantity</span>;
+            
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">fieldWidth</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">fieldWidth</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">fieldHeight</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">fieldHeight</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">fieldDepth</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">fieldDepth</span>;
+            
+            <span class="ActionScriptDefault_Text">createParticles</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">particleSize</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">createParticles</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">size</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">width2</span>  :<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">fieldWidth</span> <span class="ActionScriptOperator">/</span>2;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">height2</span> :<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">fieldHeight</span> <span class="ActionScriptOperator">/</span>2;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">depth2</span>  :<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">fieldDepth</span> <span class="ActionScriptOperator">/</span>2;
+            
+            <span class="ActionScriptReserved">for</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">quantity</span>; <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">++</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">addParticle</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Particle</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">material</span> <span class="ActionScriptReserved">as</span> <span class="ActionScriptDefault_Text">ParticleMaterial</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">size</span><span class="ActionScriptOperator">,</span><span class="ActionScriptDefault_Text">Math</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">random</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">fieldWidth</span>  <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">width2</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">Math</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">random</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">fieldHeight</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">height2</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">Math</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">random</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">fieldDepth</span>  <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">depth2</span> <span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span>
+</pre></body>
+</html>

@@ -1,0 +1,310 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>MaterialObject3D.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">proto</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">command</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">RenderTriangle</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">data</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">RenderSessionData</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">draw</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ITriangleDrawer</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">material</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MaterialManager</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">materials</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">WireframeMaterial</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">objects</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DisplayObject3D</span>;
+    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">display</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">BitmapData</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">display</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Graphics</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">events</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">EventDispatcher</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Matrix</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">utils</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Dictionary</span>;    
+
+    <span class="ActionScriptASDoc">/**
+    * The MaterialObject3D class is the base class for all materials.
+    * &lt;p/&gt;
+    * Materials collects data about how objects appear when rendered.
+    * &lt;p/&gt;
+    * A material is data that you assign to objects or faces, so that they appear a certain way when rendered. Materials affect the line and fill colors.
+    * &lt;p/&gt;
+    * Materials create greater realism in a scene. A material describes how an object reflects or transmits light.
+    * &lt;p/&gt;
+    * You assign materials to individual objects or a selection of faces; a single object can contain different materials.
+    * &lt;p/&gt;
+    * MaterialObject3D is an abstract base class; therefore, you cannot call MaterialObject3D directly.
+    */</span>
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">MaterialObject3D</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">EventDispatcher</span> <span class="ActionScriptReserved">implements</span> <span class="ActionScriptDefault_Text">ITriangleDrawer</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_totalMaterialObjects</span> :<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 0;
+
+        <span class="ActionScriptASDoc">/**
+        * A transparent or opaque BitmapData texture.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">bitmap</span> :<span class="ActionScriptDefault_Text">BitmapData</span>;
+
+        <span class="ActionScriptASDoc">/**
+        * A Boolean value that determines whether the BitmapData texture is smoothed when rendered.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">smooth</span> :<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+
+        <span class="ActionScriptASDoc">/**
+        * A Boolean value that determines whether the texture is tiled when rendered. Defaults to false.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">tiled</span> :<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+
+        <span class="ActionScriptASDoc">/**
+        * A Boolean value that determines whether the texture is cached, i.e. not updated before being rendered. Defaults to false.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">baked</span> :<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+
+        <span class="ActionScriptASDoc">/**
+        * A RGB color value to draw the faces outline.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">lineColor</span> :<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">DEFAULT_COLOR</span>;
+
+        <span class="ActionScriptASDoc">/**
+        * An 8-bit alpha value for the faces outline. If zero, no outline is drawn.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">lineAlpha</span> :<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 0;
+        
+        <span class="ActionScriptASDoc">/**
+        * An value for the thickness of the faces line.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">lineThickness</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 1;
+
+        <span class="ActionScriptASDoc">/**
+        * A RGB color value to fill the faces with. Only used if no texture is provided.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">fillColor</span> :<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">DEFAULT_COLOR</span>;
+
+        <span class="ActionScriptASDoc">/**
+        * An 8-bit alpha value fill the faces with. If this value is zero and no texture is provided or is undefined, a fill is not created.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">fillAlpha</span> :<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 0;
+
+        <span class="ActionScriptASDoc">/**
+        * A Boolean value that indicates whether the faces are single sided. It has preference over doubleSided.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">oneSide</span> :<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">true</span>;
+
+        <span class="ActionScriptASDoc">/**
+        * A Boolean value that indicates whether the faces are invisible (not drawn).
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">invisible</span> :<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+
+        <span class="ActionScriptASDoc">/**
+        * A Boolean value that indicates whether the face is flipped. Only used if doubleSided or not singeSided.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">opposite</span> :<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+
+        <span class="ActionScriptASDoc">/**
+        * Color used for DEFAULT material.
+        */</span>
+        <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">DEFAULT_COLOR</span> :<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0x000000;
+
+        <span class="ActionScriptASDoc">/**
+        * Color used for DEBUG material.
+        */</span>
+        <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">DEBUG_COLOR</span> :<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0xFF00FF;
+
+        <span class="ActionScriptASDoc">/**
+        * The name of the material.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">name</span> :<span class="ActionScriptDefault_Text">String</span>;
+
+        <span class="ActionScriptASDoc">/**
+        * [internal-use] [read-only] Unique id of this instance.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">id</span> :<span class="ActionScriptDefault_Text">Number</span>;
+
+        <span class="ActionScriptASDoc">/**
+         * Internal use
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">maxU</span> :<span class="ActionScriptDefault_Text">Number</span>;
+
+        <span class="ActionScriptASDoc">/**
+         * Internal use
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">maxV</span> :<span class="ActionScriptDefault_Text">Number</span>;
+         
+         <span class="ActionScriptASDoc">/**
+        * Holds the original size of the bitmap before it was resized by Automip mapping
+        */</span>
+         <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">widthOffset</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 0;
+        <span class="ActionScriptASDoc">/**
+        * Holds the original size of the bitmap before it was resized by Automip mapping
+        */</span>
+         <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">heightOffset</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 0;
+        
+        <span class="ActionScriptASDoc">/**
+         * Defines if this material will be interactive
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">interactive</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+
+        <span class="ActionScriptASDoc">/**
+         * Inventory of registered objects
+         */</span>
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">objects</span>:<span class="ActionScriptDefault_Text">Dictionary</span>;
+
+        <span class="ActionScriptASDoc">/**
+        * Creates a new MaterialObject3D object.
+        *
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">MaterialObject3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">id</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">_totalMaterialObjects</span><span class="ActionScriptOperator">++</span>;
+            <span class="ActionScriptDefault_Text">MaterialManager</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">registerMaterial</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">this</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">objects</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Dictionary</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">true</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+
+        <span class="ActionScriptASDoc">/**
+        * Returns a MaterialObject3D object with the default magenta wireframe values.
+        *
+        * @return A MaterialObject3D object.
+        */</span>
+        <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">get</span> <span class="ActionScriptDefault_Text">DEFAULT</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">MaterialObject3D</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">defMaterial</span> :<span class="ActionScriptDefault_Text">MaterialObject3D</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">WireframeMaterial</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>; <span class="ActionScriptComment">//RH, it now returns a wireframe material.
+</span>            <span class="ActionScriptDefault_Text">defMaterial</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">lineColor</span>   <span class="ActionScriptOperator">=</span> 0xFFFFFF <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">Math</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">random</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">defMaterial</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">lineAlpha</span>   <span class="ActionScriptOperator">=</span> 1;
+            <span class="ActionScriptDefault_Text">defMaterial</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">fillColor</span>   <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">DEFAULT_COLOR</span>;
+            <span class="ActionScriptDefault_Text">defMaterial</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">fillAlpha</span>   <span class="ActionScriptOperator">=</span> 1;
+            <span class="ActionScriptDefault_Text">defMaterial</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">doubleSided</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">defMaterial</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+
+        <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">get</span> <span class="ActionScriptDefault_Text">DEBUG</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">MaterialObject3D</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">defMaterial</span> :<span class="ActionScriptDefault_Text">MaterialObject3D</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">MaterialObject3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+
+            <span class="ActionScriptDefault_Text">defMaterial</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">lineColor</span>   <span class="ActionScriptOperator">=</span> 0xFFFFFF <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">Math</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">random</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">defMaterial</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">lineAlpha</span>   <span class="ActionScriptOperator">=</span> 1;
+            <span class="ActionScriptDefault_Text">defMaterial</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">fillColor</span>   <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">DEBUG_COLOR</span>;
+            <span class="ActionScriptDefault_Text">defMaterial</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">fillAlpha</span>   <span class="ActionScriptOperator">=</span> 0.37;
+            <span class="ActionScriptDefault_Text">defMaterial</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">doubleSided</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">true</span>;
+
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">defMaterial</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        
+        <span class="ActionScriptASDoc">/**
+         * Draws the triangle to screen.
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">drawTriangle</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">tri</span>:<span class="ActionScriptDefault_Text">RenderTriangle</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">graphics</span>:<span class="ActionScriptDefault_Text">Graphics</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">renderSessionData</span>:<span class="ActionScriptDefault_Text">RenderSessionData</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altBitmap</span>:<span class="ActionScriptDefault_Text">BitmapData</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altUV</span>:<span class="ActionScriptDefault_Text">Matrix</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">drawRT</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">rt</span>:<span class="ActionScriptDefault_Text">RenderTriangle</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">graphics</span>:<span class="ActionScriptDefault_Text">Graphics</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">renderSessionData</span>:<span class="ActionScriptDefault_Text">RenderSessionData</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span><span class="ActionScriptBracket/Brace">{</span>
+            
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+        * Updates the BitmapData bitmap from the given texture.
+        *
+        * Draws the current MovieClip image onto bitmap.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">updateBitmap</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> {}
+
+
+        <span class="ActionScriptASDoc">/**
+        * Copies the properties of a material.
+        *
+        * @param    material    Material to copy from.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">copy</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">material</span> :<span class="ActionScriptDefault_Text">MaterialObject3D</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">bitmap</span>    <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">material</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">bitmap</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">smooth</span>    <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">material</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">smooth</span>;
+
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">lineColor</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">material</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">lineColor</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">lineAlpha</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">material</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">lineAlpha</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">fillColor</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">material</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">fillColor</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">fillAlpha</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">material</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">fillAlpha</span>;
+            
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">oneSide</span>   <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">material</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">oneSide</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">opposite</span>  <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">material</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">opposite</span>;
+
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">invisible</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">material</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">invisible</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">name</span>      <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">material</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">name</span>;
+            
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">maxU</span>      <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">material</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">maxU</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">maxV</span>      <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">material</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">maxV</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+
+        <span class="ActionScriptASDoc">/**
+        * Creates a copy of the material.
+        *
+        * @return    A newly created material that contains the same properties.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">clone</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">MaterialObject3D</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">cloned</span>:<span class="ActionScriptDefault_Text">MaterialObject3D</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">MaterialObject3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">cloned</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">copy</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">this</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">cloned</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Registers the &lt;code&gt;DisplayObject3D&lt;/code&gt;
+         */</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">registerObject</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">displayObject3D</span>:<span class="ActionScriptDefault_Text">DisplayObject3D</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">objects</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">displayObject3D</span><span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">true</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">unregisterObject</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">displayObject3D</span>:<span class="ActionScriptDefault_Text">DisplayObject3D</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">objects</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">objects</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">displayObject3D</span><span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">objects</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">displayObject3D</span><span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">destroy</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">objects</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+            <span class="ActionScriptDefault_Text">bitmap</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+            <span class="ActionScriptDefault_Text">MaterialManager</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">unRegisterMaterial</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">this</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+
+        <span class="ActionScriptASDoc">/**
+        * Returns a string value representing the material properties.
+        *
+        * @return    A string.
+        */</span>
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">toString</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">String</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptString">'[MaterialObject3D] bitmap:'</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">bitmap</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptString">' lineColor:'</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">lineColor</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptString">' fillColor:'</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">fillColor</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+        * A Boolean value that indicates whether the faces are double sided.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">get</span> <span class="ActionScriptDefault_Text">doubleSided</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Boolean</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptOperator">!</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">oneSide</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">set</span> <span class="ActionScriptDefault_Text">doubleSided</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">double</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">oneSide</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptOperator">!</span> <span class="ActionScriptDefault_Text">double</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+
+        <span class="ActionScriptASDoc">/**
+        * Returns a list of &lt;code&gt;DisplayObject3D&lt;/code&gt; objects registered with the material.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">getObjectList</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Dictionary</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">objects</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">isUpdateable</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Boolean</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptOperator">!</span> <span class="ActionScriptDefault_Text">baked</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>

@@ -1,0 +1,283 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>MovieMaterial.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">materials</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">display</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">BitmapData</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">display</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DisplayObject</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">display</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Graphics</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">display</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Stage</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Matrix</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Rectangle</span>;
+    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">log</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">PaperLogger</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">command</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">RenderTriangle</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">data</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">RenderSessionData</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">draw</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ITriangleDrawer</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">material</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">IUpdateAfterMaterial</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">material</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">IUpdateBeforeMaterial</span>;    
+
+    <span class="ActionScriptASDoc">/**
+     * The MovieMaterial class creates a texture from an existing MovieClip instance.
+    * &lt;p/&gt;
+    * The texture can be animated and/or transparent. Current scale and color values of the MovieClip instance will be used. Rotation will be discarded.
+    * &lt;p/&gt;
+    * Materials collects data about how objects appear when rendered.
+    */</span>
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">MovieMaterial</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">BitmapMaterial</span> <span class="ActionScriptReserved">implements</span> <span class="ActionScriptDefault_Text">ITriangleDrawer</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">IUpdateBeforeMaterial</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">IUpdateAfterMaterial</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptComment">// ______________________________________________________________________ PUBLIC
+</span>        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">recreateBitmapInSuper</span>:<span class="ActionScriptDefault_Text">Boolean</span>;
+        
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">materialIsUsed</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+        <span class="ActionScriptASDoc">/**
+        * The MovieClip that is used as a texture.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">movie</span> :<span class="ActionScriptDefault_Text">DisplayObject</span>;
+
+        <span class="ActionScriptASDoc">/**
+        * A Boolean value that determines whether the MovieClip is transparent. The default value is false, which is much faster.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">movieTransparent</span> :<span class="ActionScriptDefault_Text">Boolean</span>;
+        
+        <span class="ActionScriptASDoc">/**
+        * When updateBitmap() is called on an animated material, it looks to handle a change in size on the texture.
+        * 
+        * This is true by default, but in certain situations, like drawing on an object, you wouldn't want the size to change
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">allowAutoResize</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+
+        <span class="ActionScriptComment">// ______________________________________________________________________ ANIMATED
+</span>
+        <span class="ActionScriptASDoc">/**
+        * A Boolean value that determines whether the texture is animated.
+        *
+        * If set, the material must be included into the scene so the BitmapData texture can be updated when rendering. For performance reasons, the default value is false.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">get</span> <span class="ActionScriptDefault_Text">animated</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Boolean</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">movieAnimated</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">set</span> <span class="ActionScriptDefault_Text">animated</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">status</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">movieAnimated</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">status</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+        * A texture object.
+        */</span>        
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">get</span> <span class="ActionScriptDefault_Text">texture</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Object</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">_texture</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptASDoc">/**
+        * @private
+        */</span>
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">set</span> <span class="ActionScriptDefault_Text">texture</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">asset</span>:<span class="ActionScriptDefault_Text">Object</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">asset</span> <span class="ActionScriptReserved">is</span> <span class="ActionScriptDefault_Text">DisplayObject</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptReserved">false</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">PaperLogger</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">error</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"MovieMaterial.texture requires a Sprite to be passed as the object"</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptReserved">return</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptDefault_Text">bitmap</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">createBitmapFromSprite</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">DisplayObject</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">asset</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">_texture</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">asset</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+
+        <span class="ActionScriptComment">// ______________________________________________________________________ RECT
+</span>
+        <span class="ActionScriptASDoc">/**
+        *  Rectangle object that defines the area of the source object to draw.
+        *  
+        *  When present, this property defines bitmap size overriding allowAutoResize.
+        *
+        *  If you do not supply this value, no clipping occurs and the entire source object is drawn.
+        *  
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">get</span> <span class="ActionScriptDefault_Text">rect</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Rectangle</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">clipRect</span>:<span class="ActionScriptDefault_Text">Rectangle</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">userClipRect</span> <span class="ActionScriptOperator">||</span> <span class="ActionScriptDefault_Text">autoClipRect</span>;
+            
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptOperator">!</span> <span class="ActionScriptDefault_Text">clipRect</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">movie</span> <span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptDefault_Text">clipRect</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">movie</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">getBounds</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">movie</span> <span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">clipRect</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">set</span> <span class="ActionScriptDefault_Text">rect</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">clipRect</span>:<span class="ActionScriptDefault_Text">Rectangle</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">userClipRect</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">clipRect</span>;
+            <span class="ActionScriptDefault_Text">createBitmapFromSprite</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">movie</span> <span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+
+        <span class="ActionScriptComment">// ______________________________________________________________________ PRIVATE
+</span>
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">userClipRect</span>            :<span class="ActionScriptDefault_Text">Rectangle</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">autoClipRect</span>            :<span class="ActionScriptDefault_Text">Rectangle</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">movieAnimated</span>            :<span class="ActionScriptDefault_Text">Boolean</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">quality</span>                    :<span class="ActionScriptDefault_Text">String</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">stage</span>                    :<span class="ActionScriptDefault_Text">Stage</span>;
+
+        <span class="ActionScriptComment">// ______________________________________________________________________ NEW
+</span>
+        <span class="ActionScriptASDoc">/**
+        * The MovieMaterial class creates a texture from an existing MovieClip instance.
+        *
+        * @param    movieAsset        A reference to an existing MovieClip loaded into memory or on stage
+        * @param    transparent        [optional] - If it's not transparent, the empty areas of the MovieClip will be of fill32 color. Default value is false.
+        * @param    animated        [optional] - a flag setting whether or not this material has animation.  If set to true, it will be updated during each render loop
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">MovieMaterial</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">movieAsset</span>:<span class="ActionScriptDefault_Text">DisplayObject</span><span class="ActionScriptOperator">=</span><span class="ActionScriptReserved">null</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">transparent</span>:<span class="ActionScriptDefault_Text">Boolean</span><span class="ActionScriptOperator">=</span><span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">animated</span>:<span class="ActionScriptDefault_Text">Boolean</span><span class="ActionScriptOperator">=</span><span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">precise</span>:<span class="ActionScriptDefault_Text">Boolean</span><span class="ActionScriptOperator">=</span><span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">rect</span>:<span class="ActionScriptDefault_Text">Rectangle</span><span class="ActionScriptOperator">=</span><span class="ActionScriptReserved">null</span> <span class="ActionScriptBracket/Brace">)</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">movieTransparent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">transparent</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">animated</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">animated</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">precise</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">precise</span>;
+            <span class="ActionScriptDefault_Text">userClipRect</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">rect</span>;
+
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">movieAsset</span> <span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptDefault_Text">texture</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">movieAsset</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptComment">// ______________________________________________________________________ CREATE BITMAP
+</span>
+        <span class="ActionScriptASDoc">/**
+        * 
+        * @param    asset
+        * @return
+        */</span>
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">createBitmapFromSprite</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">asset</span>:<span class="ActionScriptDefault_Text">DisplayObject</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">BitmapData</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptComment">// Set the new movie reference
+</span>            <span class="ActionScriptDefault_Text">movie</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">asset</span>;
+            
+            <span class="ActionScriptComment">// initialize the bitmap since it's new
+</span>            <span class="ActionScriptDefault_Text">initBitmap</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">movie</span> <span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptComment">// Draw
+</span>            <span class="ActionScriptDefault_Text">drawBitmap</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+
+            <span class="ActionScriptComment">// Call super.createBitmap to centralize the bitmap specific code.
+</span>            <span class="ActionScriptComment">// Here only MovieClip specific code, all bitmap code (maxUVs, AUTO_MIP_MAP, correctBitmap) in BitmapMaterial.
+</span>            <span class="ActionScriptDefault_Text">bitmap</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">super</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">createBitmap</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">bitmap</span> <span class="ActionScriptBracket/Brace">)</span>;
+
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">bitmap</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">initBitmap</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">asset</span>:<span class="ActionScriptDefault_Text">DisplayObject</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptComment">// Cleanup previous bitmap if needed
+</span>            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">bitmap</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptDefault_Text">bitmap</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">dispose</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptComment">// Create new bitmap
+</span>            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">userClipRect</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">bitmap</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">BitmapData</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">int</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">userClipRect</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">width</span><span class="ActionScriptOperator">+</span>0.5<span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">int</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">userClipRect</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">height</span><span class="ActionScriptOperator">+</span>0.5<span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">movieTransparent</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">fillColor</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span><span class="ActionScriptReserved">else</span> <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">asset</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">width</span> <span class="ActionScriptOperator">==</span> 0 <span class="ActionScriptOperator">||</span> <span class="ActionScriptDefault_Text">asset</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">height</span> <span class="ActionScriptOperator">==</span> 0<span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">bitmap</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">BitmapData</span><span class="ActionScriptBracket/Brace">(</span> 256<span class="ActionScriptOperator">,</span> 256<span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">movieTransparent</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">fillColor</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span><span class="ActionScriptReserved">else</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">bitmap</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">BitmapData</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">int</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">asset</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">width</span><span class="ActionScriptOperator">+</span>0.5<span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">int</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">asset</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">height</span><span class="ActionScriptOperator">+</span>0.5<span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">movieTransparent</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">fillColor</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">drawTriangle</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">tri</span>:<span class="ActionScriptDefault_Text">RenderTriangle</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">graphics</span>:<span class="ActionScriptDefault_Text">Graphics</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">renderSessionData</span>:<span class="ActionScriptDefault_Text">RenderSessionData</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altBitmap</span>:<span class="ActionScriptDefault_Text">BitmapData</span><span class="ActionScriptOperator">=</span><span class="ActionScriptReserved">null</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altUV</span>:<span class="ActionScriptDefault_Text">Matrix</span><span class="ActionScriptOperator">=</span><span class="ActionScriptReserved">null</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">materialIsUsed</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">true</span>;
+            <span class="ActionScriptReserved">super</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">drawTriangle</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">tri</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">graphics</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altBitmap</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altUV</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    
+        
+        <span class="ActionScriptComment">// ______________________________________________________________________ UPDATE
+</span>        <span class="ActionScriptASDoc">/**
+        * Updates animated MovieClip bitmap.
+        *
+        * Draws the current MovieClip image onto bitmap.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">updateBeforeRender</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderSessionData</span>:<span class="ActionScriptDefault_Text">RenderSessionData</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">materialIsUsed</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">movieAnimated</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptComment">// using int is much faster than using Math.floor. And casting the variable saves in speed from having the avm decide what to cast it as
+</span>                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">mWidth</span>:<span class="ActionScriptDefault_Text">int</span>;
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">mHeight</span>:<span class="ActionScriptDefault_Text">int</span>;
+
+                <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">userClipRect</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptDefault_Text">mWidth</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">int</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">userClipRect</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">width</span><span class="ActionScriptOperator">+</span>0.5<span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">mHeight</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">int</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">userClipRect</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">height</span><span class="ActionScriptOperator">+</span>0.5<span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+                <span class="ActionScriptReserved">else</span>
+                <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptDefault_Text">mWidth</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">int</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">movie</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">width</span><span class="ActionScriptOperator">+</span>0.5<span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">mHeight</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">int</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">movie</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">height</span><span class="ActionScriptOperator">+</span>0.5<span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+                
+                
+                <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">allowAutoResize</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">mWidth</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptDefault_Text">bitmap</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">width</span> <span class="ActionScriptOperator">||</span> <span class="ActionScriptDefault_Text">mHeight</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptDefault_Text">bitmap</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">height</span> <span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptDefault_Text">initBitmap</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">movie</span> <span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">recreateBitmapInSuper</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">true</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+                
+            <span class="ActionScriptBracket/Brace">}</span>        
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">updateAfterRender</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderSessionData</span>:<span class="ActionScriptDefault_Text">RenderSessionData</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">movieAnimated</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptReserved">true</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">materialIsUsed</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptReserved">true</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">drawBitmap</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">recreateBitmapInSuper</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptDefault_Text">bitmap</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">super</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">createBitmap</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">bitmap</span> <span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">recreateBitmapInSuper</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>    
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">drawBitmap</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptComment">// Clear bitmap
+</span>            <span class="ActionScriptDefault_Text">bitmap</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">fillRect</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">bitmap</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">rect</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">fillColor</span> <span class="ActionScriptBracket/Brace">)</span>;
+
+            <span class="ActionScriptComment">// Set quality
+</span>            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">stage</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">quality</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">stageQuality</span>:<span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">stage</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">quality</span>;
+                <span class="ActionScriptDefault_Text">stage</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">quality</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">quality</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+
+            <span class="ActionScriptComment">// Clip rectangle
+</span>            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">clipRect</span>:<span class="ActionScriptDefault_Text">Rectangle</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">rect</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">trans</span>:<span class="ActionScriptDefault_Text">Matrix</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Matrix</span><span class="ActionScriptBracket/Brace">(</span> 1<span class="ActionScriptOperator">,</span> 0<span class="ActionScriptOperator">,</span> 0<span class="ActionScriptOperator">,</span> 1<span class="ActionScriptOperator">,</span> <span class="ActionScriptOperator">-</span><span class="ActionScriptDefault_Text">clipRect</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptOperator">-</span><span class="ActionScriptDefault_Text">clipRect</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span> <span class="ActionScriptBracket/Brace">)</span>;
+
+            <span class="ActionScriptComment">// Draw
+</span>            <span class="ActionScriptDefault_Text">bitmap</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">draw</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">movie</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">trans</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">movie</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">transform</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">colorTransform</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">null</span> <span class="ActionScriptBracket/Brace">)</span>;
+
+            <span class="ActionScriptComment">// Update rectangle
+</span>            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptOperator">!</span> <span class="ActionScriptDefault_Text">userClipRect</span> <span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptDefault_Text">autoClipRect</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">movie</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">getBounds</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">movie</span> <span class="ActionScriptBracket/Brace">)</span>;
+
+            <span class="ActionScriptComment">// Restore quality
+</span>            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">stage</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">quality</span> <span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptDefault_Text">stage</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">quality</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">stageQuality</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+
+        <span class="ActionScriptComment">// ______________________________________________________________________ QUALITY
+</span>
+        <span class="ActionScriptASDoc">/**
+        * Specifies which rendering quality Flash Player uses when drawing the bitmap texture from the movie asset.
+        * 
+        * If not set, bitmaps are drawn using the current stage quality setting.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">setQuality</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">quality</span>:<span class="ActionScriptDefault_Text">String</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">stage</span>:<span class="ActionScriptDefault_Text">Stage</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">updateNow</span>:<span class="ActionScriptDefault_Text">Boolean</span><span class="ActionScriptOperator">=</span><span class="ActionScriptReserved">true</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">quality</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">quality</span>;  
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">stage</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">stage</span>;
+
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">updateNow</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptDefault_Text">createBitmapFromSprite</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">movie</span> <span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>

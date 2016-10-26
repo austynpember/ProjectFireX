@@ -1,0 +1,79 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>RenderParticle.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">command</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    
+    <span class="ActionScriptASDoc">/**
+     * @Author Ralph Hauwert
+     * 
+     * updated by Seb Lee-Delisle 
+     *  - added HitTestPoint2D so that it works with interactivity.
+     */</span>
+     
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">display</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Graphics</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Point</span>;
+    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderables</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Particle</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">data</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">RenderHitData</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">data</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">RenderSessionData</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">materials</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">special</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ParticleMaterial</span>;    
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">RenderParticle</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">RenderableListItem</span> <span class="ActionScriptReserved">implements</span> <span class="ActionScriptDefault_Text">IRenderListItem</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+    
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">particle</span>:<span class="ActionScriptDefault_Text">Particle</span>;
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">renderMat</span>:<span class="ActionScriptDefault_Text">ParticleMaterial</span>; 
+        
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">RenderParticle</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">particle</span>:<span class="ActionScriptDefault_Text">Particle</span><span class="ActionScriptBracket/Brace">)</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">super</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">particle</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">particle</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderableInstance</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">particle</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderable</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">Particle</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">instance</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">particle</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">instance</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">render</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderSessionData</span>:<span class="ActionScriptDefault_Text">RenderSessionData</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">graphics</span>:<span class="ActionScriptDefault_Text">Graphics</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">particle</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">material</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">drawParticle</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">particle</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">graphics</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">hitTestPoint2D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">point</span>:<span class="ActionScriptDefault_Text">Point</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">rhd</span>:<span class="ActionScriptDefault_Text">RenderHitData</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">RenderHitData</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">renderMat</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">particle</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">material</span>;
+            <span class="ActionScriptComment">//if( !renderMat ) renderMat = triangle.instance.material;
+</span>            
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderMat</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">interactive</span><span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">particle</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderRect</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">contains</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">point</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">point</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span> 
+                <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptDefault_Text">rhd</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">displayObject3D</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">particle</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">instance</span>; 
+                    <span class="ActionScriptDefault_Text">rhd</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">material</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">renderMat</span>;
+                    <span class="ActionScriptDefault_Text">rhd</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderable</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">particle</span>; 
+                    <span class="ActionScriptDefault_Text">rhd</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">hasHit</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">true</span>;
+                    
+                    <span class="ActionScriptComment">//TODO UPDATE 3D hit point and UV
+</span>                    <span class="ActionScriptDefault_Text">rhd</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">particle</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span>; 
+                    <span class="ActionScriptDefault_Text">rhd</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">particle</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span>; 
+                    <span class="ActionScriptDefault_Text">rhd</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">z</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">particle</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">z</span>; 
+                    <span class="ActionScriptDefault_Text">rhd</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">u</span> <span class="ActionScriptOperator">=</span> 0;
+                    <span class="ActionScriptDefault_Text">rhd</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">v</span> <span class="ActionScriptOperator">=</span> 0; 
+                    <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">rhd</span>; 
+                <span class="ActionScriptBracket/Brace">}</span>
+                
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">rhd</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>

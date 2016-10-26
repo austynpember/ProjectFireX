@@ -1,0 +1,106 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>BasicProjectionPipeline.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">project</span> <span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">data</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">RenderSessionData</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">objects</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DisplayObject3D</span>;    
+
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">BasicProjectionPipeline</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">ProjectionPipeline</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">BasicProjectionPipeline</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">super</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">init</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">init</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+                
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * project(renderSessionData:RenderSessionData);
+         * 
+         * Projects all base objects
+         * 
+         * @returns void;
+         */</span>
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">project</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderSessionData</span>:<span class="ActionScriptDefault_Text">RenderSessionData</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptComment">// Transform camera
+</span>            <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">camera</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">transformView</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptComment">//Start looping through all objects in the scene.
+</span>            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">objects</span>:<span class="ActionScriptDefault_Text">Array</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderObjects</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">p</span>:<span class="ActionScriptDefault_Text">DisplayObject3D</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">objects</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">test</span>:<span class="ActionScriptDefault_Text">Number</span>;
+            
+            <span class="ActionScriptComment">//The frustum camera requires 4x4 matrices.
+</span>            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">camera</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">useProjectionMatrix</span> <span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptReserved">for each</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">p</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">objects</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptComment">//Test if the object is set to visible
+</span>                    <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">p</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">visible</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                        <span class="ActionScriptComment">//If we filter objects per viewport..then....
+</span>                        <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">viewPort</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">viewportObjectFilter</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                            <span class="ActionScriptComment">//...test if the object should be rendered to this viewport.
+</span>                            <span class="ActionScriptDefault_Text">test</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">viewPort</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">viewportObjectFilter</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">testObject</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">p</span><span class="ActionScriptBracket/Brace">)</span>
+                            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">test</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                                <span class="ActionScriptComment">// project it.
+</span>                                <span class="ActionScriptDefault_Text">projectObject</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">p</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">test</span><span class="ActionScriptBracket/Brace">)</span>;
+                            <span class="ActionScriptBracket/Brace">}</span><span class="ActionScriptReserved">else</span><span class="ActionScriptBracket/Brace">{</span>
+                                <span class="ActionScriptComment">//...if the object shouldn't be rendered on this viewport
+</span>                                <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderStatistics</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">filteredObjects</span><span class="ActionScriptOperator">++</span>;
+                            <span class="ActionScriptBracket/Brace">}</span>
+                        <span class="ActionScriptBracket/Brace">}</span><span class="ActionScriptReserved">else</span><span class="ActionScriptBracket/Brace">{</span>
+                            <span class="ActionScriptComment">//If we don't filter objects.
+</span>                            <span class="ActionScriptDefault_Text">projectObject</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">p</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">,</span> 1<span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptBracket/Brace">}</span>
+                    <span class="ActionScriptBracket/Brace">}</span>
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span><span class="ActionScriptReserved">else</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptReserved">for each</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">p</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">objects</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptComment">//Test if the object is set to visible
+</span>                    
+                    <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">p</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">visible</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                        <span class="ActionScriptComment">//If we filter objects per viewport..then....
+</span>                        <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">viewPort</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">viewportObjectFilter</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                            <span class="ActionScriptDefault_Text">test</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">viewPort</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">viewportObjectFilter</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">testObject</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">p</span><span class="ActionScriptBracket/Brace">)</span>; 
+                            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">test</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                                <span class="ActionScriptComment">// project it.
+</span>                                <span class="ActionScriptDefault_Text">projectObject</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">p</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">test</span><span class="ActionScriptBracket/Brace">)</span>;
+                            <span class="ActionScriptBracket/Brace">}</span><span class="ActionScriptReserved">else</span><span class="ActionScriptBracket/Brace">{</span>
+                                <span class="ActionScriptComment">//The object is filtered.
+</span>                                <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderStatistics</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">filteredObjects</span><span class="ActionScriptOperator">++</span>;
+                            <span class="ActionScriptBracket/Brace">}</span>
+                        <span class="ActionScriptBracket/Brace">}</span><span class="ActionScriptReserved">else</span><span class="ActionScriptBracket/Brace">{</span>
+                            <span class="ActionScriptComment">// project it
+</span>                            <span class="ActionScriptDefault_Text">projectObject</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">p</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">,</span> 1<span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptBracket/Brace">}</span>
+                    <span class="ActionScriptBracket/Brace">}</span>
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">projectObject</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">object</span>:<span class="ActionScriptDefault_Text">DisplayObject3D</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">renderSessionData</span>:<span class="ActionScriptDefault_Text">RenderSessionData</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">test</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptComment">//Collect everything from the object
+</span>            <span class="ActionScriptDefault_Text">object</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">cullTest</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">test</span>;
+            
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">object</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">parent</span><span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptDefault_Text">object</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">project</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">object</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">parent</span> <span class="ActionScriptReserved">as</span> <span class="ActionScriptDefault_Text">DisplayObject3D</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">else</span>
+                <span class="ActionScriptDefault_Text">object</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">project</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">camera</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">renderSessionData</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>

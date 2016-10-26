@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:mx="library://ns.adobe.com/flex/mx" 
+		   layout="absolute"
+		   xmlns:components="components.*"
+		   width="100%" height="100%" 
+		   creationComplete="init(event)" removedFromStage="destroy(event)"
+		   implements="interfaces.IGameInterface" xmlns:skins="skins.*">
+	
+	<fx:Declarations>
+		<mx:GlowFilter id="glowFilter" color="#AAFF00" blurX="20" blurY="20" alpha=".7"/>
+		<mx:GlowFilter id="glowFilter2" color="#FF0000" blurX="6" blurY="6" inner="true" alpha=".7"/>
+	</fx:Declarations>
+
+	<fx:Script>
+		<![CDATA[
+			import com.Constants;
+			
+			import components.ButtonEx;
+			
+			import events.ScoreEvent;
+			
+			import flash.utils.clearInterval;
+			import flash.utils.setInterval;
+			
+			import interfaces.IGameInterface;
+			
+			import mx.controls.Image;
+			import mx.core.UIComponent;
+			
+			import spark.components.Label;
+			
+			[Bindable]
+			private static var _doneButton:ButtonEx;
+			[Bindable]
+			private static var _helpText:Image;
+			[Bindable]
+			public static var _paused:Boolean;
+			
+			public var gameLoader:Loader;
+			public var gameComp:UIComponent;
+			
+			[Bindable]
+			private var currentLevel:int;
+			[Bindable]
+			private var currentScore:int = 0;
+			
+			[Embed(source="/../assets/Nuke.png")]
+			[Bindable]
+			private var imgCls:Class;
+			
+			[Embed(source="/../assets/Help.png")] 
+			[Bindable]
+			private var imgCls2:Class;
+			
+			[Embed(source="/../assets/Intro.jpg")] 
+			[Bindable]
+			private var imgCls3:Class;
+			
+			[Bindable]
+			private var nukePosition:int = -155;
+			
+			private var _updateInterval:uint;
+			private var _pauseCounter:int;
+
+			protected function init(e:Event):void
+			{
+				// Create a new game loader that grabs the main game controller swf
+				// When the load is complete, start the loadComplete method.
+				gameLoader = new Loader();
+				gameLoader.load(new URLRequest("com/game/GameController.swf"));
+				gameLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadComplete);
+				
+				_paused = false;
+			}
+			
+			protected function destroy(e:Event):void
+			{
+				// Unload the gameLoader, remove gameComp (UI Component which hosts the gameLoader, and unpause the game.
+				fireScore();
+				gameLoader.unload(); 
+				gameComp.removeChild(gameLoader);
+				removeElement(gameComp);
+			}
+			private function loadComplete(e:Event):void
+			{
+				// Create a new gameComp element and add the gameloader as a child.  Then add the gameComp element at pos 0.
+				gameComp = new UIComponent();  
+				gameComp.addChild(gameLoader); 
+				addElementAt(gameComp,0);
+				firePauseToggle();
+			}
+				
+			protected function showMenu(event:MouseEvent = null):void
+			{
+				// This is the method that displays the UIMenu originating from a click event.  It adds an element, and pauses the game.
+				trace("showMenu");
+				dispatchEvent(new Event(Constants.PAUSEGAME, true));
+				_paused = true;
+				addElement(UIMenu);
+				UIMenu.show(0,100);
+			}
+			
+			// INCOMING events
+			public function registerDamage(dmg:int):void {
+				healthBar.updateHealth(dmg);
+			}
+			public function updateLevel(level:int):void { 
+				currentLevel = level;
+			}
+			public function damageBoss(edmg:int):void {
+				enemyHealth.updateHealth(edmg);
+			}
+			public function updateScore(score:int):void {
+				currentScore += score;
+			}
+			public function updateNuke(nuke:int):void {
+				nukePosition += nuke * 50;
+			}
+			public function clearBossHealth():void {
+				enemyHealth.clearBossHealth();
+			}
+			// OUTGOING events
+			public function firePauseToggle(event:Event = null):void {
+				dispatchEvent(new Event(Constants.PAUSETOGGLE, true));
+				_paused = !_paused;
+			}
+			
+			public function fireScore():void {
+				var eventObj:ScoreEvent = new ScoreEvent(Constants.CALCSCORE);
+				eventObj.score = currentScore;
+				dispatchEvent(eventObj);
+			}
+			
+			// Internal Events Called from MenuComponent
+			private function pauseButtonDisable():void {
+				pauseButton.enabled = false;
+				pauseButton.alpha = 0.5;
+				_pauseCounter = 0;
+				_updateInterval = setInterval(update, 5);
+			}
+			
+			private function update():void {
+				_pauseCounter++;
+				if (_pauseCounter >= 30) {
+					pauseButton.enabled = true;
+					pauseButton.alpha = 1;
+					clearInterval(_updateInterval);
+				}
+			}
+			
+			public  function showHelp():void {
+				helpGroup.visible = true;
+				pauseButton.enabled = false;
+				pauseButton.alpha = 0.5;
+				menuButton.enabled = false;
+				menuButton.alpha = 0.5;
+			} 
+			
+			public function showDebug():void {
+				debug.visible = true;
+			} 
+			
+			public function showOptions():void {
+				trace("whoa");
+			}
+			
+			public function hideHelp():void {
+				helpGroup.visible = false;
+				pauseButton.enabled = true;
+				pauseButton.alpha = 1;
+				menuButton.enabled = true;
+				menuButton.alpha = 1;
+				firePauseToggle();
+			} 
+			
+			public function hideDebug():void {
+				debug.visible = false;
+				firePauseToggle();
+			} 
+			
+			private function checkPassword():void {
+				if (password.text == Constants.DEBUGPASSWORD){
+					dispatchEvent(new Event(Constants.DEBUG, true));
+					debug.visible = false;
+					firePauseToggle();
+				}
+			}
+			
+			private function beginGame():void {
+				contentGroup.visible = true;
+				begin.visible = false;
+				dispatchEvent(new Event(Constants.PLAYFADE, true));
+				firePauseToggle();
+			}
+		]]>
+	</fx:Script>
+	 
+	<components:MenuComponent id="UIMenu" fontSize="20" />
+	
+	<s:Group id="begin" width="100%" height="70" verticalCenter="0" horizontalCenter="0">
+		<mx:Image id="storyImage" source="{imgCls3}" verticalCenter="0" horizontalCenter="0"/>
+		<components:BorderContainerComponent width="100%" verticalCenter="0"/>
+		
+		<s:HGroup horizontalCenter="0" verticalCenter="0" gap="16">
+			<s:Label text="Click  to  start  game " fontSize="26"/>
+			<components:ButtonEx id="beginButton" label="Begin" mouseDown="beginGame()" fontSize="20" width="100"/>
+		</s:HGroup>
+	</s:Group>
+	
+	<s:Group id="debug" width="100%" height="70" visible="false" verticalCenter="0" horizontalCenter="0">
+		
+		<components:BorderContainerComponent width="100%" verticalCenter="0"/>
+		
+		<s:HGroup horizontalCenter="0" verticalCenter="0" gap="16">
+			<s:Label text="Enter  Debug  Password : " fontSize="20"/>
+			<s:TextInput id="password" fontSize="16"/>
+			<components:ButtonEx id="submit" label="Submit" mouseDown="checkPassword()" fontSize="18"/>
+			<components:ButtonEx id="closeDebug" label="Close" mouseDown="hideDebug()" fontSize="18"/>
+		</s:HGroup>
+	</s:Group>
+	
+	<s:Group id="contentGroup" visible="false" left="0" right="0" top="0" bottom="0" minWidth="0" minHeight="0">
+
+		<components:BorderContainerComponent id="topBorderContainer" width="100%" height="70"/>
+	
+		<s:Group id="topGroup" width="100%" height="70">
+			<components:Health id="healthBar" verticalCenter="0" left="40"/>
+			<s:Label id="pausedLabel" verticalCenter="0" left="86" text="Paused" fontSize="30" visible="{_paused}" color="0xFFFFFF"/>
+			<s:Label id="levelLabel" text="Level : {currentLevel}" verticalCenter="2" right="240" fontSize="22"/>
+			<s:Label id="ScoreLabel" text="Score : {currentScore}" verticalCenter="2" right="360" fontSize="22"/>
+			<components:ButtonEx id="pauseButton" label="Pause"  verticalCenter="0" right="140"
+								 mouseDown="firePauseToggle(event);pauseButtonDisable()" fontSize="20"/>
+			<components:ButtonEx id="menuButton" label="Menu"  click="showMenu(event)" verticalCenter="0" right="40" fontSize="20"/>
+		</s:Group>
+		<s:Group id="bottomGroup" width="100%" height="70" bottom="0">
+			<components:EnemyHealth id="enemyHealth" verticalCenter="0" horizontalCenter="0"/>
+		</s:Group>
+		
+		<s:Group id="nukeGroup" width="150" height="50" bottom="0" x="{nukePosition}">
+			<mx:Image id="nukeImage1" source="{imgCls}" verticalCenter="0" right="0" filters="{[glowFilter,glowFilter2]}"/>
+			<mx:Image id="nukeImage2" source="{imgCls}" verticalCenter="0" right="50" filters="{[glowFilter,glowFilter2]}"/>
+			<mx:Image id="nukeImage3" source="{imgCls}" verticalCenter="0" right="100" filters="{[glowFilter,glowFilter2]}"/>
+		</s:Group>
+		
+		<s:Group id="helpGroup" visible="false" width="100%" height="100%">
+			<mx:Image id="helpImage" source="{imgCls2}" verticalCenter="0" horizontalCenter="0"/>
+			<components:ButtonEx id="closeHelp" label="Close" horizontalCenter="0" width="{helpImage.width / 2}" fontSize="24"
+								 top="{helpImage.y + helpImage.height - 50}" mouseDown="hideHelp()"/>
+		</s:Group>
+	</s:Group>
+</mx:Module>

@@ -1,0 +1,263 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Curve3D.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">animation</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">curve</span> 
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">animation</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">enum</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">InfinityType</span>;    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">animation</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">key</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">BezierCurveKey3D</span>;    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">animation</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">key</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">LinearCurveKey3D</span>;    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">animation</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">key</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">CurveKey3D</span>;
+
+    <span class="ActionScriptASDoc">/**
+     * A Curve3D stores a bunch of CurveKey3D's and given a value representing an input point on a curve returns 
+     * the output of the curve for that input.
+     * 
+     * @see org.papervision3d.core.animation.key.CurveKey3D
+     * 
+     * @author Tim Knip / floorplanner.com
+     */</span>
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">Curve3D</span> 
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptASDoc">/**
+         * The behavior of the curve after the last key. 
+         * 
+         * @see org.papervision3d.core.animation.enum.InfinityType
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">postInfinity</span> : <span class="ActionScriptDefault_Text">uint</span>;
+        
+        <span class="ActionScriptASDoc">/**
+         * The behavior of the curve before the first key. 
+         * 
+         * @see org.papervision3d.core.animation.enum.InfinityType
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">preInfinity</span> : <span class="ActionScriptDefault_Text">uint</span>;
+        
+        <span class="ActionScriptASDoc">/**
+         * 
+         */</span>
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_keys</span> : <span class="ActionScriptDefault_Text">Array</span>;
+        
+        <span class="ActionScriptASDoc">/** */</span>
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_current</span> : <span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0;
+
+        <span class="ActionScriptASDoc">/**
+         * Constructor.
+         * 
+         * @param preInfinity    The behavior of the curve before the first key. Defaults to InfinityType.CONSTANT
+         * @param postInfinity    The behavior of the curve after the last key. Defaults to InfinityType.CONSTANT
+         * 
+         * @see org.papervision3d.core.animation.enum.InfinityType
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">Curve3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">preInfinity</span> : <span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> -1<span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">postInfinity</span> : <span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> -1<span class="ActionScriptBracket/Brace">)</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">postInfinity</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">postInfinity</span> <span class="ActionScriptOperator">&lt;</span> 0 <span class="ActionScriptOperator">?</span> <span class="ActionScriptDefault_Text">InfinityType</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">CONSTANT</span> : <span class="ActionScriptDefault_Text">postInfinity</span>; 
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">preInfinity</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">preInfinity</span> <span class="ActionScriptOperator">&lt;</span> 0 <span class="ActionScriptOperator">?</span> <span class="ActionScriptDefault_Text">InfinityType</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">CONSTANT</span> : <span class="ActionScriptDefault_Text">preInfinity</span>;
+            
+            <span class="ActionScriptDefault_Text">_keys</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">_current</span> <span class="ActionScriptOperator">=</span> 0;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Adds a key.
+         * 
+         * @param key
+         * 
+         * @return The added key or null on failure
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">addKey</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">key</span> : <span class="ActionScriptDefault_Text">CurveKey3D</span><span class="ActionScriptBracket/Brace">)</span> : <span class="ActionScriptDefault_Text">CurveKey3D</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_keys</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">indexOf</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">key</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptOperator">-</span>1<span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">_keys</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">push</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">key</span><span class="ActionScriptBracket/Brace">)</span>;    
+                <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">key</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">null</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+
+        <span class="ActionScriptASDoc">/**
+         * Removes a key.
+         * 
+         * @param key
+         * 
+         * @return The removed key or null on failure
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">removeKey</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">key</span> : <span class="ActionScriptDefault_Text">CurveKey3D</span><span class="ActionScriptBracket/Brace">)</span> : <span class="ActionScriptDefault_Text">CurveKey3D</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">pos</span> : <span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">_keys</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">indexOf</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">key</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">pos</span> <span class="ActionScriptOperator">&gt;=</span> 0<span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">_keys</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">splice</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">pos</span><span class="ActionScriptOperator">,</span> 1<span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">key</span>;    
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">null</span>;    
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Main workhorse of the animation system.
+         * 
+         * @param input    Time in seconds.
+         * 
+         * @return    The current value of this curve.
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">evaluate</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">input</span> : <span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptBracket/Brace">)</span> : <span class="ActionScriptDefault_Text">Number</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">kfs</span> : <span class="ActionScriptDefault_Text">Array</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">_keys</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">numKeys</span> : <span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">kfs</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span>;
+            
+            <span class="ActionScriptComment">// Check for empty curves and poses (curves with 1 key).
+</span>            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">numKeys</span> <span class="ActionScriptOperator">==</span> 0 <span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptReserved">return</span> 0.0;
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">numKeys</span> <span class="ActionScriptOperator">==</span> 1 <span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">kfs</span><span class="ActionScriptBracket/Brace">[</span>0<span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">output</span>;
+            
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">index</span>:<span class="ActionScriptDefault_Text">int</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">startKey</span> : <span class="ActionScriptDefault_Text">CurveKey3D</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">kfs</span><span class="ActionScriptBracket/Brace">[</span>0<span class="ActionScriptBracket/Brace">]</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">endKey</span> : <span class="ActionScriptDefault_Text">CurveKey3D</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">kfs</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">numKeys</span><span class="ActionScriptOperator">-</span>1<span class="ActionScriptBracket/Brace">]</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">outputStart</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">startKey</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">output</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">outputEnd</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">endKey</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">output</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">inputStart</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">startKey</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">input</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">inputEnd</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">endKey</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">input</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">inputSpan</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">inputEnd</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">inputStart</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">outputSpan</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">outputEnd</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">outputStart</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">cycleCount</span>:<span class="ActionScriptDefault_Text">Number</span>;
+
+            <span class="ActionScriptComment">// Account for pre-infinity mode
+</span>            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">outputOffset</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 0.0;
+            
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">inputStart</span><span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptReserved">switch</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">preInfinity</span><span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">InfinityType</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">CONSTANT</span>: 
+                        <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">outputStart</span>;
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">InfinityType</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">LINEAR</span>: 
+                        <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">outputStart</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">inputStart</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">*</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">kfs</span><span class="ActionScriptBracket/Brace">[</span>1<span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">output</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">outputStart</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">/</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">kfs</span><span class="ActionScriptBracket/Brace">[</span>1<span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">inputStart</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">InfinityType</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">CYCLE</span>:
+                        <span class="ActionScriptDefault_Text">cycleCount</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">Math</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ceil</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">inputStart</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">input</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">/</span> <span class="ActionScriptDefault_Text">inputSpan</span><span class="ActionScriptBracket/Brace">)</span>; 
+                        <span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptDefault_Text">cycleCount</span> <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">inputSpan</span>; 
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">InfinityType</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">CYCLE_RELATIVE</span>:
+                        <span class="ActionScriptDefault_Text">cycleCount</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">Math</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ceil</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">inputStart</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">input</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">/</span> <span class="ActionScriptDefault_Text">inputSpan</span><span class="ActionScriptBracket/Brace">)</span>; 
+                        <span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptDefault_Text">cycleCount</span> <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">inputSpan</span>; 
+                        <span class="ActionScriptDefault_Text">outputOffset</span> <span class="ActionScriptOperator">-=</span> <span class="ActionScriptDefault_Text">cycleCount</span> <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">outputSpan</span>;
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">InfinityType</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">OSCILLATE</span>:
+                        <span class="ActionScriptDefault_Text">cycleCount</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">Math</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ceil</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">inputStart</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">input</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">/</span> <span class="ActionScriptBracket/Brace">(</span>2.0 <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">inputSpan</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>; 
+                        <span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptDefault_Text">cycleCount</span> <span class="ActionScriptOperator">*</span> 2.0 <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">inputSpan</span>; 
+                        <span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">inputEnd</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">Math</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">abs</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">inputEnd</span><span class="ActionScriptBracket/Brace">)</span>; 
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptReserved">default</span>: 
+                        <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">outputStart</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">else</span> <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">&gt;=</span> <span class="ActionScriptDefault_Text">inputEnd</span><span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptComment">// Account for post-infinity mode
+</span>                <span class="ActionScriptReserved">switch</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">postInfinity</span><span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">InfinityType</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">CONSTANT</span>: 
+                        <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">outputEnd</span>;
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">InfinityType</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">LINEAR</span>: 
+                        <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">outputEnd</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">inputEnd</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">*</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">kfs</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">numKeys</span><span class="ActionScriptOperator">-</span>2<span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">output</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">outputEnd</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">/</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">kfs</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">numKeys</span><span class="ActionScriptOperator">-</span>2<span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">inputEnd</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">InfinityType</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">CYCLE</span>:
+                        <span class="ActionScriptDefault_Text">cycleCount</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">Math</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ceil</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">inputEnd</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">/</span> <span class="ActionScriptDefault_Text">inputSpan</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">-=</span> <span class="ActionScriptDefault_Text">cycleCount</span> <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">inputSpan</span>; 
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">InfinityType</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">CYCLE_RELATIVE</span>:
+                        <span class="ActionScriptDefault_Text">cycleCount</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">Math</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ceil</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">inputEnd</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">/</span> <span class="ActionScriptDefault_Text">inputSpan</span><span class="ActionScriptBracket/Brace">)</span>; 
+                        <span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">-=</span> <span class="ActionScriptDefault_Text">cycleCount</span> <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">inputSpan</span>; 
+                        <span class="ActionScriptDefault_Text">outputOffset</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptDefault_Text">cycleCount</span> <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">outputSpan</span>; 
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">InfinityType</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">OSCILLATE</span>:
+                        <span class="ActionScriptDefault_Text">cycleCount</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">Math</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ceil</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">inputEnd</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">/</span> <span class="ActionScriptBracket/Brace">(</span>2.0 <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">inputSpan</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>; 
+                        <span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">-=</span> <span class="ActionScriptDefault_Text">cycleCount</span> <span class="ActionScriptOperator">*</span> 2.0 <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">inputSpan</span>; 
+                        <span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">inputStart</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">Math</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">abs</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">inputStart</span><span class="ActionScriptBracket/Brace">)</span>; 
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptReserved">default</span>: 
+                        <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">outputEnd</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">kf</span> : <span class="ActionScriptDefault_Text">CurveKey3D</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">_current</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">numKeys</span> <span class="ActionScriptOperator">?</span> <span class="ActionScriptDefault_Text">kfs</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">_current</span><span class="ActionScriptBracket/Brace">]</span> : <span class="ActionScriptReserved">null</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">cf</span> : <span class="ActionScriptDefault_Text">CurveKey3D</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">_current</span> <span class="ActionScriptOperator">-</span> 1 <span class="ActionScriptOperator">&gt;=</span> 0 <span class="ActionScriptOperator">?</span> <span class="ActionScriptDefault_Text">kfs</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">_current</span><span class="ActionScriptOperator">-</span>1<span class="ActionScriptBracket/Brace">]</span> : <span class="ActionScriptReserved">null</span>;
+            
+            <span class="ActionScriptComment">// might speed up interval search a bit
+</span>            <span class="ActionScriptDefault_Text">_current</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">cf</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">kf</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">cf</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">input</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">?</span> <span class="ActionScriptDefault_Text">_current</span> : 0;
+            
+            <span class="ActionScriptComment">// Find the current interval
+</span>            <span class="ActionScriptComment">// TODO: speed up interval search
+</span>            <span class="ActionScriptReserved">for</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">index</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">_current</span>; <span class="ActionScriptDefault_Text">index</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">numKeys</span>; <span class="ActionScriptDefault_Text">index</span><span class="ActionScriptOperator">++</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">kf</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">kfs</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">index</span><span class="ActionScriptBracket/Brace">]</span>;
+                <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">kf</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">&gt;</span> <span class="ActionScriptDefault_Text">input</span><span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptReserved">break</span>;    
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptDefault_Text">_current</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">index</span>;
+            
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">index</span> <span class="ActionScriptOperator">&lt;</span> 1<span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">outputOffset</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">outputStart</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptComment">// Get the keys and values for this interval
+</span>            <span class="ActionScriptDefault_Text">endKey</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">kfs</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">index</span><span class="ActionScriptBracket/Brace">]</span>;
+            <span class="ActionScriptDefault_Text">startKey</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">kfs</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">index</span> <span class="ActionScriptOperator">-</span> 1<span class="ActionScriptBracket/Brace">]</span>;
+            
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">endValue</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">endKey</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">output</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">startValue</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">startKey</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">output</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">inputInterval</span> : <span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">endKey</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">startKey</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">input</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">outputInterval</span> : <span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">endValue</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">startValue</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">output</span>:<span class="ActionScriptDefault_Text">Number</span>;
+            
+            <span class="ActionScriptComment">// TODO: handle Bezier curves.
+</span>            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">startKey</span> <span class="ActionScriptReserved">is</span> <span class="ActionScriptDefault_Text">LinearCurveKey3D</span> <span class="ActionScriptOperator">||</span> <span class="ActionScriptDefault_Text">startKey</span> <span class="ActionScriptReserved">is</span> <span class="ActionScriptDefault_Text">BezierCurveKey3D</span><span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">output</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">startValue</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">startKey</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">input</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">/</span> <span class="ActionScriptDefault_Text">inputInterval</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">outputInterval</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">else</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">output</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">startValue</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">outputOffset</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">output</span>;    
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Clone.
+         * 
+         * @return    The cloned curve.
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">clone</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span> : <span class="ActionScriptDefault_Text">Curve3D</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">curve</span> : <span class="ActionScriptDefault_Text">Curve3D</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Curve3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">preInfinity</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">postInfinity</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">key</span> : <span class="ActionScriptDefault_Text">CurveKey3D</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span> : <span class="ActionScriptDefault_Text">int</span>;
+            
+            <span class="ActionScriptReserved">for</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">_keys</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span>; <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">++</span><span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">key</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">_keys</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>;
+                <span class="ActionScriptDefault_Text">curve</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">addKey</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">key</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">clone</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">curve</span>;    
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * 
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">get</span> <span class="ActionScriptDefault_Text">keys</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span> : <span class="ActionScriptDefault_Text">Array</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">_keys</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span>
+</pre></body>
+</html>

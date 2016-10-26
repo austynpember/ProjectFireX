@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx">
+	<fx:Script>
+		<![CDATA[
+			import com.Constants;
+			
+			import events.modEvent;
+			
+			import mx.core.BitmapAsset;
+			
+			[Embed(source="/../assets/HealthBar.png")]
+			[Bindable]
+			private var imgCls:Class;
+			
+			[Bindable]
+			public var healthLevel:int = Constants.HEALTH;
+			private static const MAXWIDTH:int = 200;
+			private var healthVisual:Number = MAXWIDTH / Constants.HEALTH;
+			[Bindable]
+			private var _overlayWidth:int =0;
+			
+			private var _timer:int = 0;
+			
+			//Sound	
+			[Embed(source="/../assets/Sound/LowHealth_SFX.mp3")] 
+			private var soundAsset1:Class;
+			private var sound1:Sound = new soundAsset1() as Sound;
+			private var st:SoundTransform = new SoundTransform(Constants.VOLUMEHIGH);
+			private var myChannel:SoundChannel = new SoundChannel();
+			/**
+			 * Called when any damage (+/-) is done on the Player.
+			 * @param dmg
+			 * @return
+			 */
+			public function updateHealth(dmg:int):void {
+				updateHealthLevel(dmg);
+				checkIfLow();
+				checkDead();
+			}
+			
+			/**
+			 * Create a temp health level that looks at the new health value to determine what to do with damage.
+			 * @param dmg
+			 * @return
+			 */
+			private function updateHealthLevel(dmg:int):void {
+				// Create a temp health level that looks at the new health value to determine what to do with damage.
+				// Complexity is for positive health.
+				var tmpHealth:int = healthLevel;
+				tmpHealth -= dmg;
+				if(tmpHealth > 100){
+					healthLevel = 100;
+					_overlayWidth = 0;
+				}
+				else {
+					healthLevel -= dmg;
+					_overlayWidth += healthVisual * dmg;
+				}
+				
+				if(_overlayWidth >= MAXWIDTH)
+					_overlayWidth=0;
+			}
+			/**
+			 * Checks to see if health is low enough to play the low health alarm noise.
+			 * @return
+			 */
+			private function checkIfLow():void {
+				if(healthLevel < 25) {
+					_timer ++;
+					if(_timer == 1 || _timer % 400 == 0)
+						myChannel = sound1.play(0,0,st);
+				}
+				else{
+					if(myChannel) myChannel.stop();
+					_timer = 0;
+				}
+			}
+			/**
+			 * Checks to see if health is 0. HealthLevel gets reset.
+			 * Game elements must be cleaned off and HighScore/GameOver screen should be displayed fire mod event to PFX.
+			 * @return
+			 */
+			private function checkDead():void {
+				// Game elements must be cleaned off and highscore screen should be displayed.
+				// Counters and such need to be reset as well.
+				if(healthLevel < 1)
+				{
+					var eventObj:modEvent = new modEvent(Constants.GOTOHIGHSCORE);
+					eventObj.modName = Constants.GOTOHIGHSCORE;
+					eventObj.string = "Game Over";
+					dispatchEvent(eventObj);
+					if(myChannel) myChannel.stop();
+					//Reset Health
+					healthLevel = 100;
+				}
+			}
+		]]>
+	</fx:Script>
+	<mx:Image id="HealthImage" source="{imgCls}"/>
+	<s:Rect radiusX="3" height="29" width="{_overlayWidth}" right="2" verticalCenter="0" minWidth="0">
+		<s:fill>
+			<s:SolidColor color="0x000000"/>
+		</s:fill>
+	</s:Rect>
+</s:Group>

@@ -1,0 +1,186 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Vertex3D.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptComment">/*
+ *  PAPER    ON   ERVIS  NPAPER ISION  PE  IS ON  PERVI IO  APER  SI  PA
+ *  AP  VI  ONPA  RV  IO PA     SI  PA ER  SI NP PE     ON AP  VI ION AP
+ *  PERVI  ON  PE VISIO  APER   IONPA  RV  IO PA  RVIS  NP PE  IS ONPAPE
+ *  ER     NPAPER IS     PE     ON  PE  ISIO  AP     IO PA ER  SI NP PER
+ *  RV     PA  RV SI     ERVISI NP  ER   IO   PE VISIO  AP  VISI  PA  RV3D
+ *  ______________________________________________________________________
+ *  papervision3d.org + blog.papervision3d.org + osflash.org/papervision3d
+ */</span>
+
+<span class="ActionScriptComment">/*
+ * Copyright 2006 (c) Carlos Ulloa Matesanz, noventaynueve.com.
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */</span>
+
+<span class="ActionScriptComment">// ______________________________________________________________________
+</span><span class="ActionScriptComment">//                                                               Vertex3D
+</span><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderables</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">utils</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Dictionary</span>;
+    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">math</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Number3D</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">command</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">IRenderListItem</span>;
+    
+
+    <span class="ActionScriptASDoc">/**
+    * The Vertex3D constructor lets you create 3D vertices.
+    */</span>
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">Vertex3D</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">AbstractRenderable</span> <span class="ActionScriptReserved">implements</span> <span class="ActionScriptDefault_Text">IRenderable</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptASDoc">/**
+        * An Number that sets the X coordinate of a object relative to the scene coordinate system.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">x</span> :<span class="ActionScriptDefault_Text">Number</span>;
+    
+        <span class="ActionScriptASDoc">/**
+        * An Number that sets the Y coordinate of a object relative to the scene coordinates.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">y</span> :<span class="ActionScriptDefault_Text">Number</span>;
+    
+        <span class="ActionScriptASDoc">/**
+        * An Number that sets the Z coordinate of a object relative to the scene coordinates.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">z</span> :<span class="ActionScriptDefault_Text">Number</span>;
+    
+        <span class="ActionScriptASDoc">/**
+        * An object that contains user defined properties.
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">extra</span> :<span class="ActionScriptDefault_Text">Object</span>;
+        
+        <span class="ActionScriptASDoc">/**
+         * Used for removing duplicates in clipping procedures
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">timestamp</span>:<span class="ActionScriptDefault_Text">Number</span>;
+        
+        <span class="ActionScriptASDoc">/**
+         * Vertex2D instance 
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">vertex3DInstance</span>:<span class="ActionScriptDefault_Text">Vertex3DInstance</span>;
+        
+        <span class="ActionScriptComment">//To be docced
+</span>        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">normal</span>:<span class="ActionScriptDefault_Text">Number3D</span>;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">connectedFaces</span>:<span class="ActionScriptDefault_Text">Dictionary</span>;
+        
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">persp</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptOperator">=</span>0;
+        
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">position</span>:<span class="ActionScriptDefault_Text">Number3D</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Number3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+    
+        <span class="ActionScriptASDoc">/**
+        * Creates a new Vertex3D object whose three-dimensional values are specified by the x, y and z parameters.
+        *
+        * @param    x    The horizontal coordinate value. The default value is zero.
+        * @param    y    The vertical coordinate value. The default value is zero.
+        * @param    z    The depth coordinate value. The default value is zero.
+        *
+        * */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">Vertex3D</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">x</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptOperator">=</span>0<span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">y</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptOperator">=</span>0<span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">z</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptOperator">=</span>0 <span class="ActionScriptBracket/Brace">)</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">position</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">x</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">position</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">y</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">z</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">position</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">z</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">z</span>;
+            
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vertex3DInstance</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Vertex3DInstance</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">normal</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Number3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">connectedFaces</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Dictionary</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">getPosition</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Number3D</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">position</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">x</span>;
+            <span class="ActionScriptDefault_Text">position</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">y</span>;
+            <span class="ActionScriptDefault_Text">position</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">z</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">z</span>;
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">position</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">toNumber3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Number3D</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Number3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span><span class="ActionScriptDefault_Text">z</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">clone</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Vertex3D</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">clone</span>:<span class="ActionScriptDefault_Text">Vertex3D</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Vertex3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span><span class="ActionScriptDefault_Text">z</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">clone</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">extra</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">extra</span>;
+            <span class="ActionScriptDefault_Text">clone</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vertex3DInstance</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">vertex3DInstance</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">clone</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">clone</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">normal</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">normal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">clone</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">clone</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">calculateNormal</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">face</span>:<span class="ActionScriptDefault_Text">Triangle3D</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">count</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 0;
+            <span class="ActionScriptDefault_Text">normal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">reset</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">for each</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">face</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">connectedFaces</span><span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>    
+                
+                <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">face</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">faceNormal</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptDefault_Text">count</span><span class="ActionScriptOperator">++</span>;
+                    <span class="ActionScriptDefault_Text">normal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">plusEq</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">face</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">faceNormal</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptComment">//normal.x/=count;
+</span>            <span class="ActionScriptComment">//normal.y/=count;
+</span>            <span class="ActionScriptComment">//normal.z/=count;
+</span>            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">p</span>:<span class="ActionScriptDefault_Text">Number3D</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getPosition</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">p</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">/=</span> <span class="ActionScriptDefault_Text">count</span>;
+            <span class="ActionScriptDefault_Text">p</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span> <span class="ActionScriptOperator">/=</span> <span class="ActionScriptDefault_Text">count</span>;
+            <span class="ActionScriptDefault_Text">p</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">z</span> <span class="ActionScriptOperator">/=</span><span class="ActionScriptDefault_Text">count</span>;
+            <span class="ActionScriptDefault_Text">p</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">normalize</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">normal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">plusEq</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">p</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">normal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">normalize</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">getRenderListItem</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">IRenderListItem</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">null</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">weighted</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">a</span>:<span class="ActionScriptDefault_Text">Vertex3D</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">b</span>:<span class="ActionScriptDefault_Text">Vertex3D</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">aw</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">bw</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Vertex3D</span>
+        <span class="ActionScriptBracket/Brace">{</span>                
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">d</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">aw</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">bw</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">ak</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">aw</span> <span class="ActionScriptOperator">/</span> <span class="ActionScriptDefault_Text">d</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">bk</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">bw</span> <span class="ActionScriptOperator">/</span> <span class="ActionScriptDefault_Text">d</span>;
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Vertex3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">a</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">*</span><span class="ActionScriptDefault_Text">ak</span><span class="ActionScriptOperator">+</span><span class="ActionScriptDefault_Text">b</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">*</span><span class="ActionScriptDefault_Text">bk</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">a</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">*</span><span class="ActionScriptDefault_Text">ak</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">b</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">*</span><span class="ActionScriptDefault_Text">bk</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">a</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">z</span><span class="ActionScriptOperator">*</span><span class="ActionScriptDefault_Text">ak</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">b</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">z</span><span class="ActionScriptOperator">*</span><span class="ActionScriptDefault_Text">bk</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">perspective</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">focus</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Vertex3DInstance</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">persp</span> <span class="ActionScriptOperator">=</span> 1 <span class="ActionScriptOperator">/</span> <span class="ActionScriptBracket/Brace">(</span>1 <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">z</span> <span class="ActionScriptOperator">/</span> <span class="ActionScriptDefault_Text">focus</span><span class="ActionScriptBracket/Brace">)</span>;
+
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Vertex3DInstance</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">persp</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">y</span> <span class="ActionScriptOperator">*</span> <span class="ActionScriptDefault_Text">persp</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">z</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>

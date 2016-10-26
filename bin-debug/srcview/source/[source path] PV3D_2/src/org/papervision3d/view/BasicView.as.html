@@ -1,0 +1,105 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>BasicView.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">view</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">cameras</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">SpringCamera3D</span>;    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">cameras</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Camera3D</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">cameras</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">CameraType</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">cameras</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DebugCamera3D</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">view</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">IView</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">objects</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DisplayObject3D</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">render</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">BasicRenderEngine</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">scenes</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Scene3D</span>;
+
+    <span class="ActionScriptASDoc">/**
+     * &lt;p&gt;
+     * BasicView provides a simple template for quickly setting up
+     * basic Papervision3D projects by creating a viewport, scene,
+     * camera, and renderer for you. Because BasicView is a subclass of
+     * Sprite, it can be added to any DisplayObject.
+     * 
+     * &lt;/p&gt;
+     * 
+     * &lt;p&gt;
+     * &lt;p&gt;
+     * Example:
+     * &lt;/p&gt;
+     * &lt;pre&gt;&lt;code&gt;
+     * var width:Number = 640;
+     * var heigth:Number = 480;
+     * var scaleToStage:Boolean = true;
+     * var interactive:Boolean = true;
+     * var cameraType:String = Camera3D.TYPE;
+     * 
+     * var myBasicView:BasicView = new BasicView(width, height, scaleToStage, interactive, cameraType);
+     * myDisplayObject.addChild(myBasicView);
+     * &lt;/code&gt;&lt;/pre&gt;
+     * &lt;/p&gt;
+     * @author Ralph Hauwert
+     */</span>
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">BasicView</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">AbstractView</span> <span class="ActionScriptReserved">implements</span> <span class="ActionScriptDefault_Text">IView</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptASDoc">/**
+         * @param viewportWidth        Width of the viewport 
+         * @param viewportHeight    Height of the viewport
+         * @param scaleToStage        Whether you viewport should scale with the stage
+         * @param interactive        Whether your scene should be interactive
+         * @param cameraType        A String for the type of camera. @see org.papervision3d.cameras.CameraType
+         * 
+         */</span>    
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">BasicView</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">viewportWidth</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 640<span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">viewportHeight</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 480<span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">scaleToStage</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">true</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">interactive</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">cameraType</span>:<span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptString">"Target"</span><span class="ActionScriptBracket/Brace">)</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">super</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptDefault_Text">scene</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Scene3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">viewport</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Viewport3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">viewportWidth</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">viewportHeight</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">scaleToStage</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">interactive</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">addChild</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">viewport</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">renderer</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">BasicRenderEngine</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptReserved">switch</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">cameraType</span><span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">CameraType</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DEBUG</span>:
+                    <span class="ActionScriptDefault_Text">_camera</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">DebugCamera3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">viewport</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptReserved">break</span>;
+                <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">CameraType</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">TARGET</span>:
+                    <span class="ActionScriptDefault_Text">_camera</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Camera3D</span><span class="ActionScriptBracket/Brace">(</span>60<span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">_camera</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">target</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">DisplayObject3D</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ZERO</span>;
+                    <span class="ActionScriptReserved">break</span>;
+                <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">CameraType</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">SPRING</span>:
+                    <span class="ActionScriptDefault_Text">_camera</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">SpringCamera3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">_camera</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">target</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">DisplayObject3D</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ZERO</span>;        
+                    <span class="ActionScriptReserved">break</span>;            
+                <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">CameraType</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">FREE</span>:
+                <span class="ActionScriptReserved">default</span>:
+                    <span class="ActionScriptDefault_Text">_camera</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Camera3D</span><span class="ActionScriptBracket/Brace">(</span>60<span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptReserved">break</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptDefault_Text">cameraAsCamera3D</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">update</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">viewport</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">sizeRectangle</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Exposes the camera as a &lt;code&gt;Camera3D&lt;/code&gt;
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">get</span> <span class="ActionScriptDefault_Text">cameraAsCamera3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Camera3D</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">_camera</span> <span class="ActionScriptReserved">as</span> <span class="ActionScriptDefault_Text">Camera3D</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Exposes the camera as a &lt;code&gt;DebugCamera3D&lt;/code&gt;
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">get</span> <span class="ActionScriptDefault_Text">cameraAsDebugCamera3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">DebugCamera3D</span> 
+        <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">_camera</span> <span class="ActionScriptReserved">as</span> <span class="ActionScriptDefault_Text">DebugCamera3D</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>

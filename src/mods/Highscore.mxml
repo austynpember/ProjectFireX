@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:mx="library://ns.adobe.com/flex/mx" 
+		   layout="absolute"
+		   xmlns:components="components.*"
+		   width="100%" height="100%"
+		   implements="interfaces.ScoreInterface"
+		   creationComplete="callScoreAndString(event)" 
+		   backgroundColor="0">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import com.Constants;
+			import com.adobe.serialization.json.JSON;
+			
+			import events.modEvent;
+			
+			import mx.collections.ArrayList;
+			
+			[Bindable]
+			protected var _finalScore:int;
+			
+			[Bindable]
+			protected var _endMessage:String;
+			
+			[Bindable]
+			private var _scoresList:ArrayList = new ArrayList;
+			/**
+			 * Called on CreationComplete.  Fires event to PFX to call up its saved score in order to desplay.
+			 * @param e
+			 * @return
+			 */
+			public function callScoreAndString(e:Event):void {
+				dispatchEvent(new Event(Constants.CALLSCORE, true));
+			}
+			/**
+			 * Called from PFX after callScore is done... updates the Score Label with the PFX's stored score.
+			 * @param score
+			 * @return
+			 */
+			public function updateScoreAndString(score:int,string:String):void {
+				_endMessage = string;
+				_finalScore = score;
+			}
+			
+			// *****************************  FOR VIEWING HIGH SCORES  ************************* // 
+			
+			private function showHS(event:MouseEvent = null):void {
+				trace('Load Scores');
+				var scoresLoader:URLLoader = new URLLoader();
+				scoresLoader.addEventListener(Event.COMPLETE, handleScoreLoad, false, 0, true);
+				scoresLoader.addEventListener(IOErrorEvent.IO_ERROR, streamError1, false, 0, true);
+				scoresLoader.load(new URLRequest(Constants.BASE_SERVICE_URL + Constants.SCORES_URL + Constants.GAMEID));
+				trace(Constants.BASE_SERVICE_URL + Constants.SCORES_URL + Constants.GAMEID);
+			}
+			private function streamError1(e:IOErrorEvent):void  {
+				trace("Unable to load scores. Please try again later. IOError");
+			}
+			private function streamError2(e:IOErrorEvent):void  {
+				saveAlert.visible = true;
+				trace("Unable to Save scores. Please try again later. IOError");
+			}
+			private function handleScoreLoad(e:Event):void  {
+				trace('Scores Loaded');
+				//Bring in the String which you grab from the URL.
+				var objsDehydrated:String = (e.target as URLLoader).data as String;
+				//Use JSON to decode the string into an Object.
+				var objsRehydrated:Object = JSON.decode(objsDehydrated);
+				//Take The Object and grab the Scores array - put it into an Array.
+				var scoreArray:Array = objsRehydrated.Scores;
+				//Put the Array into an ArrayList for the DataGrid to use.
+				_scoresList = new ArrayList(scoreArray);
+				// Make the grid Visible
+				scoreGrid.visible = true;
+			}
+			
+			private function promptName(event:MouseEvent):void {
+				contentGroup.visible = false;
+				submitGroup.visible = true;
+			}
+			private function submitScore():void {
+				//If you previously tried to save and failed - remove the label.
+				if(saveAlert.visible) saveAlert.visible = false;
+				//Check to see if the TextField had any input - if it doesnt, return and do nothing.
+				if(userInput.text.length == 0)  return;
+				
+				// Go back to the original contentGroup
+				hideSubmitGroup();
+				var userName:String = userInput.text;
+				
+				trace("Submitting score");
+				var saveScore:URLLoader = new URLLoader();
+				saveScore.addEventListener(Event.COMPLETE, handleSaveScore, false, 0, true);
+				saveScore.addEventListener(IOErrorEvent.IO_ERROR, streamError2, false, 0, true);
+				trace(Constants.BASE_SERVICE_URL + 
+					Constants.SAVE_SCORES_URL + Constants.GAMEID + "&playerName=" + userName + "&score=" + _finalScore);
+				trace("Starting URLRequest");
+				var requestURL:URLRequest = new URLRequest(Constants.BASE_SERVICE_URL + 
+					Constants.SAVE_SCORES_URL + Constants.GAMEID + "&playerName=" + userName + "&score=" + _finalScore);
+				trace("Starting load on URL");
+				saveScore.load(requestURL);
+			}
+			private function handleSaveScore(e:Event):void {
+				trace("Save Successful");
+				submitButton.alpha = 0.5;
+				submitButton.enabled = false;
+				HSButton.alpha = 0.5;
+				HSButton.enabled = false;
+				showHS();
+			}
+			private function restartGame(event:MouseEvent):void {
+				var eventObj:modEvent = new modEvent(Constants.GOTOINTRO);
+				eventObj.modName = Constants.GOTOINTRO;
+				dispatchEvent(eventObj);
+			}
+			private function hideSubmitGroup():void {
+				submitGroup.visible = false;
+				contentGroup.visible = true;
+			}
+			
+		]]>
+	</fx:Script>
+	<s:Group id="contentGroup" width="100%" height="100%">
+		<s:Label id="typeLabel" text="{_endMessage}" fontSize="70" color="0x00AA00" horizontalCenter="0" top="15"/>
+		<s:Label id="scoreLabel" text="Score : {_finalScore}" fontSize="50" color="0x00AA00" horizontalCenter="0" y="{typeLabel.y + 60}"/>
+		<components:ButtonEx label="View  Scores" id="HSButton" fontSize="36" click="showHS(event)" horizontalCenter="-200" y="{scoreLabel.y + 60}"/>
+		<components:ButtonEx label="Submit  Score" id="submitButton" fontSize="36" click="promptName(event)" horizontalCenter="200" y="{scoreLabel.y + 60}"/>
+		
+		<mx:DataGrid id="scoreGrid" dataProvider="{_scoresList}" horizontalCenter="0" 
+					 fontSize="14" letterSpacing="3" textAlign="center" textRollOverColor="0xFF0000" borderColor="0x00FF00"
+					 y="{HSButton.y + 60}" width="500" height="270" visible="false">
+			<mx:columns>
+				<mx:DataGridColumn dataField="PlayerName" />
+				<mx:DataGridColumn dataField="Points" />
+				<mx:DataGridColumn dataField="Rank" />
+			</mx:columns> 
+		</mx:DataGrid>
+		
+		<s:Label id="saveAlert" text="Save Failed" visible="false" fontSize="50" color="0xFFFFFF" horizontalCenter="0" bottom="40"/>
+		<components:ButtonEx label="Restart  Game" id="restartButton" fontSize="36" click="restartGame(event)" horizontalCenter="0" bottom="15"/>
+	</s:Group>
+	<s:Group id="submitGroup" width="100%" height="70" visible="false" verticalCenter="0" horizontalCenter="0">
+		
+		<components:BorderContainerComponent width="100%" verticalCenter="0"/>
+		
+		<s:HGroup horizontalCenter="0" verticalCenter="0" gap="16">
+			<s:Label text="Enter Name : " fontSize="20"/>
+			<s:TextInput id="userInput" fontSize="16" maxChars="20"/>
+			<components:ButtonEx id="submit" label="Submit" mouseDown="submitScore()" fontSize="18"/>
+			<components:ButtonEx id="closeDebug" label="Close" mouseDown="hideSubmitGroup()" fontSize="18"/>
+		</s:HGroup>
+	</s:Group>
+	
+</mx:Module>

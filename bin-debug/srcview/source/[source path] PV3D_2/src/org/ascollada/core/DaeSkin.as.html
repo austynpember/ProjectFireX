@@ -1,0 +1,320 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>DaeSkin.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptComment">/*
+ * Copyright 2007 (c) Tim Knip, ascollada.org.
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */</span>
+ 
+<span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ascollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span> <span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ascollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ASCollada</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ascollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DaeEntity</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ascollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DaeSource</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ascollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DaeVertexWeights</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ascollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">utils</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Logger</span>;    
+
+    <span class="ActionScriptASDoc">/**
+     * 
+     */</span>
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">DaeSkin</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">DaeEntity</span>
+    <span class="ActionScriptBracket/Brace">{</span>    
+        <span class="ActionScriptASDoc">/** bind shape matrix */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">bind_shape_matrix</span>:<span class="ActionScriptDefault_Text">Array</span>;
+        
+        <span class="ActionScriptASDoc">/** */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">source</span>:<span class="ActionScriptDefault_Text">String</span>;
+        
+        <span class="ActionScriptASDoc">/** */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">joints</span>:<span class="ActionScriptDefault_Text">Array</span>;
+        
+        <span class="ActionScriptASDoc">/** */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">bind_matrices</span>:<span class="ActionScriptDefault_Text">Array</span>;
+        
+        <span class="ActionScriptASDoc">/** */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">vertex_weights</span>:<span class="ActionScriptDefault_Text">Array</span>;
+        
+        <span class="ActionScriptASDoc">/** */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">blendWeightsByJointID</span>:<span class="ActionScriptDefault_Text">Object</span>;
+        
+        <span class="ActionScriptASDoc">/** */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">jointsType</span>:<span class="ActionScriptDefault_Text">String</span>;
+        
+        <span class="ActionScriptASDoc">/**
+         * 
+         * @param    node
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">DaeSkin</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">document</span>:<span class="ActionScriptDefault_Text">DaeDocument</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">node</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">super</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">document</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">node</span> <span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * 
+         * @param    node
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">findJointBindMatrix</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">node</span>:<span class="ActionScriptDefault_Text">DaeNode</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Array</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">id</span>:<span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">jointsType</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptString">"IDREF"</span> <span class="ActionScriptOperator">?</span> <span class="ActionScriptDefault_Text">node</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">id</span> : <span class="ActionScriptDefault_Text">node</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">sid</span>;
+            
+            <span class="ActionScriptReserved">for</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">joints</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span>; <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">++</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">id</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">joints</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptBracket/Brace">)</span>
+                    <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">bind_matrices</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">null</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * 
+         * @param    id
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">findJointBindMatrix2</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">id</span>:<span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Array</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">for</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">joints</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span>; <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">++</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">id</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">joints</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptBracket/Brace">)</span>
+                    <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">bind_matrices</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">null</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * 
+         * @param    node
+         * 
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">findJointVertexWeights</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">node</span>:<span class="ActionScriptDefault_Text">DaeNode</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Array</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">id</span>:<span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">jointsType</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptString">"IDREF"</span> <span class="ActionScriptOperator">?</span> <span class="ActionScriptDefault_Text">node</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">id</span> : <span class="ActionScriptDefault_Text">node</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">sid</span>;
+            
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">weights</span>:<span class="ActionScriptDefault_Text">Array</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">for</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vertex_weights</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span>; <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">++</span>  <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">arr</span>:<span class="ActionScriptDefault_Text">Array</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vertex_weights</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>;
+                <span class="ActionScriptReserved">for</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">j</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">j</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">arr</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span>; <span class="ActionScriptDefault_Text">j</span><span class="ActionScriptOperator">++</span> <span class="ActionScriptBracket/Brace">)</span>
+                    <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">arr</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">j</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">joint</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptDefault_Text">id</span> <span class="ActionScriptBracket/Brace">)</span>
+                        <span class="ActionScriptDefault_Text">weights</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">push</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">arr</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">j</span><span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">weights</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * 
+         * @param    node
+         * 
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">findJointVertexWeightsByIDOrSID</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">id</span>:<span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Array</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">weights</span>:<span class="ActionScriptDefault_Text">Array</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">for</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vertex_weights</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span>; <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">++</span>  <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">arr</span>:<span class="ActionScriptDefault_Text">Array</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vertex_weights</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>;
+                <span class="ActionScriptReserved">for</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">j</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">j</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">arr</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span>; <span class="ActionScriptDefault_Text">j</span><span class="ActionScriptOperator">++</span> <span class="ActionScriptBracket/Brace">)</span>
+                    <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">arr</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">j</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">joint</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptDefault_Text">id</span> <span class="ActionScriptBracket/Brace">)</span>
+                        <span class="ActionScriptDefault_Text">weights</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">push</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">arr</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">j</span><span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">weights</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * 
+         * @param    node
+         * @return
+         */</span>
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">read</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">node</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>            
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">joints</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vertex_weights</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">bind_matrices</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">node</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">localName</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_CONTROLLER_SKIN_ELEMENT</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptReserved">return</span>;
+                
+            <span class="ActionScriptReserved">super</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">read</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">node</span> <span class="ActionScriptBracket/Brace">)</span>;
+                                        
+            <span class="ActionScriptComment">// required - ref to skin's geometry
+</span>            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">source</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getAttribute</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">node</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_SOURCE_ATTRIBUTE</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptDefault_Text">Logger</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">log</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">"reading skin, source: "</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">source</span> <span class="ActionScriptBracket/Brace">)</span>;
+                        
+            <span class="ActionScriptComment">// optional - bind_shape_matrix, defaults to identity matrix
+</span>            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">bindList</span>:<span class="ActionScriptDefault_Text">XMLList</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNodeList</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">node</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_BINDSHAPEMX_SKIN_PARAMETER</span><span class="ActionScriptBracket/Brace">)</span>;    
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">bindList</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">bind_shape_matrix</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getFloats</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">bindList</span><span class="ActionScriptBracket/Brace">[</span>0<span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">else</span>
+                <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">bind_shape_matrix</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptBracket/Brace">[</span>1<span class="ActionScriptOperator">,</span>0<span class="ActionScriptOperator">,</span>0<span class="ActionScriptOperator">,</span>0<span class="ActionScriptOperator">,</span> 0<span class="ActionScriptOperator">,</span>1<span class="ActionScriptOperator">,</span>0<span class="ActionScriptOperator">,</span>0<span class="ActionScriptOperator">,</span> 0<span class="ActionScriptOperator">,</span>0<span class="ActionScriptOperator">,</span>1<span class="ActionScriptOperator">,</span>0<span class="ActionScriptOperator">,</span> 0<span class="ActionScriptOperator">,</span>0<span class="ActionScriptOperator">,</span>0<span class="ActionScriptOperator">,</span>1<span class="ActionScriptBracket/Brace">]</span>;
+                
+            <span class="ActionScriptComment">// 3 or more &lt;source&gt; elements
+</span>            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">sourceList</span>:<span class="ActionScriptDefault_Text">XMLList</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNodeList</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">node</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_SOURCE_ELEMENT</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">sourceList</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">&lt;</span> 3 <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptReserved">throw</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Error</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">"&lt;skin&gt; requires a minimum of 3 &lt;source&gt; elements!"</span> <span class="ActionScriptBracket/Brace">)</span>;
+                
+            <span class="ActionScriptComment">// exactly 1 &lt;joints&gt; element
+</span>            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">jointsNode</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNode</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">node</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_JOINTS_ELEMENT</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">jointsNode</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptReserved">throw</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Error</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">"need exactly one &lt;joints&gt; element!"</span> <span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptComment">// exactly 1 &lt;vertex_weights&gt; element
+</span>            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">weightsNode</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNode</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">node</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_WEIGHTS_ELEMENT</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">weightsNode</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptReserved">throw</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Error</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">"need exactly one &lt;vertex_weights&gt; element!"</span> <span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">jointsList</span>:<span class="ActionScriptDefault_Text">XMLList</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNodeList</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">jointsNode</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_INPUT_ELEMENT</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">weights</span>:<span class="ActionScriptDefault_Text">DaeVertexWeights</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">DaeVertexWeights</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">document</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">weightsNode</span> <span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">srcNode</span>:<span class="ActionScriptDefault_Text">XML</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">input</span>:<span class="ActionScriptDefault_Text">DaeInput</span>;
+            
+            <span class="ActionScriptComment">// fetch sources for &lt;joints&gt;
+</span>            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">src</span>:<span class="ActionScriptDefault_Text">DaeSource</span>;
+            <span class="ActionScriptComment">//var sources:Object = new Object();
+</span>            <span class="ActionScriptReserved">for each</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">inputNode</span>:<span class="ActionScriptDefault_Text">XML</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">jointsList</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">DaeInput</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">document</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">inputNode</span> <span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">srcNode</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNodeById</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">node</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_SOURCE_ELEMENT</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">input</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">source</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">srcNode</span> <span class="ActionScriptBracket/Brace">)</span>
+                    <span class="ActionScriptReserved">throw</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Error</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">"source not found! (id='"</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">input</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">source</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptString">"')"</span> <span class="ActionScriptBracket/Brace">)</span>;
+                
+                <span class="ActionScriptDefault_Text">src</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">DaeSource</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">document</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">srcNode</span><span class="ActionScriptBracket/Brace">)</span>;
+                
+                <span class="ActionScriptReserved">switch</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">input</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">semantic</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_JOINT_SKIN_INPUT</span>:
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">joints</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">src</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">values</span>;
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">jointsType</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">src</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">accessor</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">params</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_JOINT_SKIN_INPUT</span><span class="ActionScriptBracket/Brace">]</span>;
+                        <span class="ActionScriptComment">//Logger.log( " =&gt; =&gt; joints: " + this.joints );
+</span>                        <span class="ActionScriptReserved">break</span>;
+                        
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_BINDMATRIX_SKIN_INPUT</span>:
+                        <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">bind_matrices</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">src</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">values</span>;
+                        <span class="ActionScriptComment">//Logger.log( " =&gt; =&gt; bind_matrices: " + this.bind_matrices );
+</span>                        <span class="ActionScriptReserved">break</span>;
+                        
+                    <span class="ActionScriptReserved">default</span>:
+                        <span class="ActionScriptReserved">break</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">maxOffset</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">jointOffset</span>:<span class="ActionScriptDefault_Text">uint</span> <span class="ActionScriptOperator">=</span> 0;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">weightOffset</span>:<span class="ActionScriptDefault_Text">uint</span> <span class="ActionScriptOperator">=</span> 1;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">tmpWeights</span>:<span class="ActionScriptDefault_Text">Array</span>;
+            
+            <span class="ActionScriptComment">// fetch sources for &lt;vertex_weights&gt;
+</span>            <span class="ActionScriptReserved">for each</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">input</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">weights</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">inputs</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">srcNode</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">getNodeById</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">node</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_SOURCE_ELEMENT</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">input</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">source</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">srcNode</span> <span class="ActionScriptBracket/Brace">)</span>
+                    <span class="ActionScriptReserved">throw</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Error</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">"source not found! (id='"</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">input</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">source</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptString">"')"</span> <span class="ActionScriptBracket/Brace">)</span>;
+                    
+                <span class="ActionScriptDefault_Text">src</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">DaeSource</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">document</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">srcNode</span><span class="ActionScriptBracket/Brace">)</span>;
+                
+                <span class="ActionScriptReserved">switch</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">input</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">semantic</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptBracket/Brace">{</span>    
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_JOINT_SKIN_INPUT</span>:
+                        <span class="ActionScriptDefault_Text">jointOffset</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">input</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">offset</span>;
+                        <span class="ActionScriptDefault_Text">maxOffset</span><span class="ActionScriptOperator">++</span>;
+                        <span class="ActionScriptReserved">break</span>;
+                        
+                    <span class="ActionScriptReserved">case</span> <span class="ActionScriptDefault_Text">ASCollada</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DAE_WEIGHT_SKIN_INPUT</span>:
+                        <span class="ActionScriptDefault_Text">tmpWeights</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">src</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">values</span>;
+                        <span class="ActionScriptDefault_Text">weightOffset</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">input</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">offset</span>;
+                        <span class="ActionScriptDefault_Text">maxOffset</span><span class="ActionScriptOperator">++</span>;
+                        
+                        <span class="ActionScriptReserved">break</span>;
+                        
+                    <span class="ActionScriptReserved">default</span>:
+                        <span class="ActionScriptReserved">break</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">cur</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0;
+            
+            <span class="ActionScriptReserved">for</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">weights</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vcounts</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span>; <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">++</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">vcount</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">weights</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vcounts</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>;
+                
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">tmp</span>:<span class="ActionScriptDefault_Text">Array</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+                    
+                <span class="ActionScriptReserved">for</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">j</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">j</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">vcount</span>; <span class="ActionScriptDefault_Text">j</span><span class="ActionScriptOperator">++</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">jidx</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">weights</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">v</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">cur</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">jointOffset</span> <span class="ActionScriptBracket/Brace">]</span>;
+                    <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">widx</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">weights</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">v</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">cur</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">weightOffset</span><span class="ActionScriptBracket/Brace">]</span>;
+                    
+                    <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">w</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">tmpWeights</span><span class="ActionScriptBracket/Brace">[</span> <span class="ActionScriptDefault_Text">widx</span> <span class="ActionScriptBracket/Brace">]</span>;
+                    <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">jnt</span>:<span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">jidx</span> <span class="ActionScriptOperator">&lt;</span> 0 <span class="ActionScriptOperator">?</span> <span class="ActionScriptReserved">null</span> : <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">joints</span><span class="ActionScriptBracket/Brace">[</span> <span class="ActionScriptDefault_Text">jidx</span> <span class="ActionScriptBracket/Brace">]</span>;
+                    
+                    <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">blendWeight</span>:<span class="ActionScriptDefault_Text">DaeBlendWeight</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">DaeBlendWeight</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">jnt</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">w</span> <span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">tmp</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">push</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">blendWeight</span> <span class="ActionScriptBracket/Brace">)</span>;
+                    
+                    <span class="ActionScriptDefault_Text">cur</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptDefault_Text">maxOffset</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+                
+                <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">vertex_weights</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">tmp</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptDefault_Text">Logger</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">log</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">" =&gt; =&gt; #vertex_weights "</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">vertex_weights</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span> <span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * normalize blendweights.
+         * 
+         * @param    blendWeights    the weights to normalize.
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">normalizeBlendWeights</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">blendWeights</span>:<span class="ActionScriptDefault_Text">Array</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span>:<span class="ActionScriptDefault_Text">int</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">j</span>:<span class="ActionScriptDefault_Text">int</span>;
+                        
+            <span class="ActionScriptReserved">for</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">blendWeights</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span>; <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">++</span>  <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">arr</span>:<span class="ActionScriptDefault_Text">Array</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">blendWeights</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>;
+                
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">weightSum</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 0;
+                <span class="ActionScriptReserved">for</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">j</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">j</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">arr</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span>; <span class="ActionScriptDefault_Text">j</span><span class="ActionScriptOperator">++</span> <span class="ActionScriptBracket/Brace">)</span>
+                <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptDefault_Text">weightSum</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptDefault_Text">arr</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">j</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">weight</span>;
+                    <span class="ActionScriptDefault_Text">arr</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">j</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">originalWeight</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">arr</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">j</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">weight</span>;
+                <span class="ActionScriptBracket/Brace">}</span>    
+                <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">weightSum</span> <span class="ActionScriptOperator">==</span> 0.0 <span class="ActionScriptOperator">||</span> <span class="ActionScriptDefault_Text">weightSum</span> <span class="ActionScriptOperator">==</span> 1.0 <span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptReserved">continue</span>;
+                
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">invWeightSum</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 1.0 <span class="ActionScriptOperator">/</span> <span class="ActionScriptDefault_Text">weightSum</span>;
+                
+                <span class="ActionScriptReserved">for</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">j</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">j</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">arr</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span>; <span class="ActionScriptDefault_Text">j</span><span class="ActionScriptOperator">++</span> <span class="ActionScriptBracket/Brace">)</span>
+                    <span class="ActionScriptDefault_Text">arr</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">j</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">weight</span> <span class="ActionScriptOperator">*=</span> <span class="ActionScriptDefault_Text">invWeightSum</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptBracket/Brace">}</span>    
+<span class="ActionScriptBracket/Brace">}</span>
+</pre></body>
+</html>

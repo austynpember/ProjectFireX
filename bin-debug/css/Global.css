@@ -1,0 +1,27 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+@namespace components "components.*";
+
+@font-face {
+	src: url("../assets/Fonts/ArcadeClassic.ttf");
+	fontFamily: ArcadeClassicFalse;
+	advancedAntiAliasing: true;
+	embedAsCFF: false;
+}
+
+@font-face {
+	src: url("../assets/Fonts/ArcadeClassic.ttf");
+	fontFamily: ArcadeClassicTrue;
+	advancedAntiAliasing: true;
+	embedAsCFF: true;
+}
+
+s|Button {
+	skin-class: ClassReference("skins.FireXButton");
+	fontFamily: ArcadeClassicTrue;
+}
+
+s|Label {
+	fontFamily: ArcadeClassicTrue;
+}

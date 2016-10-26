@@ -1,0 +1,180 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>ReflectionView.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">effects</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">view</span> <span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">cameras</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Camera3D</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">math</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Matrix3D</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">proto</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">CameraObject3D</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">view</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">BasicView</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">view</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Viewport3D</span>;
+    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">events</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Event</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ColorTransform</span>;    
+
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">ReflectionView</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">BasicView</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">viewportReflection</span> : <span class="ActionScriptDefault_Text">Viewport3D</span>; 
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">cameraReflection</span> : <span class="ActionScriptDefault_Text">CameraObject3D</span>;
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">surfaceHeight</span> : <span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 0; 
+        
+        <span class="ActionScriptComment">//public var reflectionMatrix : Matrix3D;  // for future use... 
+</span>        
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_autoScaleToStage</span> : <span class="ActionScriptDefault_Text">Boolean</span>; 
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">ReflectionView</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">viewportWidth</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptOperator">=</span>640<span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">viewportHeight</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptOperator">=</span>320<span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">scaleToStage</span>:<span class="ActionScriptDefault_Text">Boolean</span><span class="ActionScriptOperator">=</span><span class="ActionScriptReserved">true</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">interactive</span>:<span class="ActionScriptDefault_Text">Boolean</span><span class="ActionScriptOperator">=</span><span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">cameraType</span>:<span class="ActionScriptDefault_Text">String</span><span class="ActionScriptOperator">=</span><span class="ActionScriptString">"Target"</span><span class="ActionScriptBracket/Brace">)</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">super</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">viewportWidth</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">viewportHeight</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">scaleToStage</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">interactive</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">cameraType</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptComment">//set up reflection viewport and camera
+</span>            <span class="ActionScriptDefault_Text">viewportReflection</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Viewport3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">viewportWidth</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">viewportHeight</span><span class="ActionScriptOperator">,</span><span class="ActionScriptDefault_Text">scaleToStage</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptBracket/Brace">)</span>; 
+
+            <span class="ActionScriptComment">// For future use... 
+</span>            <span class="ActionScriptComment">//reflectionMatrix = new Matrix3D(); 
+</span>            <span class="ActionScriptComment">//createReflectionMatrix(null); 
+</span>            
+            
+            
+            <span class="ActionScriptComment">// add the reflection viewport to the stage 
+</span>            <span class="ActionScriptDefault_Text">addChild</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">viewportReflection</span><span class="ActionScriptBracket/Brace">)</span>; 
+            <span class="ActionScriptDefault_Text">setChildIndex</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">viewportReflection</span><span class="ActionScriptOperator">,</span>0<span class="ActionScriptBracket/Brace">)</span>; 
+            
+            <span class="ActionScriptComment">// flip it
+</span>            <span class="ActionScriptDefault_Text">viewportReflection</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">scaleY</span> <span class="ActionScriptOperator">=</span> -1; 
+
+            <span class="ActionScriptComment">// and move it down
+</span>            <span class="ActionScriptDefault_Text">viewportReflection</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">viewportHeight</span>;  
+
+            <span class="ActionScriptDefault_Text">cameraReflection</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Camera3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>; 
+            
+            
+
+            <span class="ActionScriptComment">// SAVING THIS CODE FOR LATER (may require transparent reflections... )
+</span>            <span class="ActionScriptComment">/*var matrix:Array = new Array();
+            matrix = matrix.concat([0.4, 0, 0, 0, 0]); // red
+            matrix = matrix.concat([0, 0.4, 0, 0, 0]); // green
+            matrix = matrix.concat([0, 0, 0.4, 0, 0]); // blue
+            matrix = matrix.concat([0, 0, 0, 1, 0]); // alpha
+            viewportReflection.filters = [new ColorMatrixFilter(matrix),new BlurFilter(8,8,1)]; 
+            */</span>
+            
+            <span class="ActionScriptDefault_Text">addEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">Event</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ADDED_TO_STAGE</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">onAddedToStage</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">addEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">Event</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">REMOVED_FROM_STAGE</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">onRemovedFromStage</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">autoScaleToStage</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">scaleToStage</span>; 
+            
+            <span class="ActionScriptDefault_Text">setReflectionColor</span><span class="ActionScriptBracket/Brace">(</span>0.5<span class="ActionScriptOperator">,</span>0.5<span class="ActionScriptOperator">,</span>0.5<span class="ActionScriptBracket/Brace">)</span>; 
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">override</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">singleRender</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            
+            <span class="ActionScriptDefault_Text">cameraReflection</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">zoom</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">camera</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">zoom</span>; 
+            <span class="ActionScriptDefault_Text">cameraReflection</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">focus</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">camera</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">focus</span>; 
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">camera</span> <span class="ActionScriptReserved">is</span> <span class="ActionScriptDefault_Text">Camera3D</span><span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">Camera3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">cameraReflection</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">useCulling</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">Camera3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">camera</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">useCulling</span>; 
+            
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">camera</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">target</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptDefault_Text">camera</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">lookAt</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">camera</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">target</span><span class="ActionScriptBracket/Brace">)</span>; 
+            <span class="ActionScriptDefault_Text">cameraReflection</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">transform</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">copy</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">camera</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">transform</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptComment">// reflection matrix! Doesn't work yet - turns planes inside out :-S
+</span>            <span class="ActionScriptComment">//cameraReflection.transform.calculateMultiply(cameraReflection.transform, reflectionMatrix); 
+</span>            
+            <span class="ActionScriptDefault_Text">cameraReflection</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">=</span><span class="ActionScriptOperator">-</span><span class="ActionScriptDefault_Text">camera</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span>;
+            <span class="ActionScriptDefault_Text">cameraReflection</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">rotationX</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptOperator">-</span><span class="ActionScriptDefault_Text">camera</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">rotationX</span>;
+            <span class="ActionScriptDefault_Text">cameraReflection</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">rotationY</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">camera</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">rotationY</span>;
+            <span class="ActionScriptDefault_Text">cameraReflection</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">rotationZ</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptOperator">-</span><span class="ActionScriptDefault_Text">camera</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">rotationZ</span>;
+            
+            <span class="ActionScriptDefault_Text">cameraReflection</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">+=</span><span class="ActionScriptDefault_Text">surfaceHeight</span>; 
+            
+            
+            
+            <span class="ActionScriptDefault_Text">renderer</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">renderScene</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">scene</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">cameraReflection</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">viewportReflection</span><span class="ActionScriptBracket/Brace">)</span>;            
+            <span class="ActionScriptReserved">super</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">singleRender</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>; 
+        
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">setReflectionColor</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">redMultiplier</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptOperator">=</span>0<span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">greenMultiplier</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptOperator">=</span>0<span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">blueMultiplier</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptOperator">=</span>0<span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">redOffset</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptOperator">=</span>0<span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">greenOffset</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptOperator">=</span>0<span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">blueOffset</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptOperator">=</span>0<span class="ActionScriptBracket/Brace">)</span>: <span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">viewportReflection</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">transform</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">colorTransform</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">ColorTransform</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">redMultiplier</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">greenMultiplier</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">blueMultiplier</span><span class="ActionScriptOperator">,</span> 1<span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">redOffset</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">greenOffset</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">blueOffset</span><span class="ActionScriptBracket/Brace">)</span>; 
+            
+        <span class="ActionScriptBracket/Brace">}</span>
+    
+    
+        <span class="ActionScriptComment">/* For future use... 
+    
+        public function createReflectionMatrix(plane:Plane3D):void
+        {
+            var a:Number = 0;//plane.normal.x;
+            var b:Number = 1;//plane.normal.y;
+            var c:Number = 0;//plane.normal.z;
+            
+            
+            reflectionMatrix.n11 = 1-(2*a*a);
+            reflectionMatrix.n12 = 0-(2*a*b);
+            reflectionMatrix.n13 = 0-(2*a*c);
+            
+            reflectionMatrix.n21 = 0-(2*a*b);
+            reflectionMatrix.n22 = 1-(2*b*b);
+            reflectionMatrix.n23 = 0-(2*b*c);
+            
+            reflectionMatrix.n31 = 0-(2*a*c);
+            reflectionMatrix.n32 = 0-(2*b*c);
+            reflectionMatrix.n33 = 1-(2*c*c);
+        }
+        
+        */</span>
+
+        <span class="ActionScriptASDoc">/**
+         * We need  to move the reflection view whenever the stage is resized so we have to implement
+         * the same functionality as the Viewport3D, ie we add a stage resize listener (once we're on the stage). 
+         */</span>
+         
+         
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">set</span> <span class="ActionScriptDefault_Text">autoScaleToStage</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">scale</span>:<span class="ActionScriptDefault_Text">Boolean</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">_autoScaleToStage</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">scale</span>;
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">scale</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">stage</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptReserved">null</span><span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">onStageResize</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Triggered when added to the stage to start listening to stage resizing
+         */</span>
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">onAddedToStage</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">event</span>:<span class="ActionScriptDefault_Text">Event</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">stage</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">addEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">Event</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">RESIZE</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">onStageResize</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">onStageResize</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+
+        <span class="ActionScriptASDoc">/**
+         * Triggered when removed from the stage to remove the stage resizing listener
+         */</span>
+        <span class="ActionScriptReserved">protected</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">onRemovedFromStage</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">event</span>:<span class="ActionScriptDefault_Text">Event</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">stage</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">removeEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">Event</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">RESIZE</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">onStageResize</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptComment">// all we need to do is move the view down
+</span>        <span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">onStageResize</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">e</span>:<span class="ActionScriptDefault_Text">Event</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span><span class="ActionScriptBracket/Brace">)</span> : <span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">viewportReflection</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">stage</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">stageHeight</span>;  
+            
+        <span class="ActionScriptBracket/Brace">}</span>
+                
+                
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>

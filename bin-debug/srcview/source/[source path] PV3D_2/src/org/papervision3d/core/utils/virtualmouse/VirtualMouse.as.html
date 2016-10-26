@@ -1,0 +1,781 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>VirtualMouse.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptASDoc">/**
+* @author Trevor McCauley
+* @link www.senocular.com
+*/</span>
+
+<span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">utils</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">virtualmouse</span>
+<span class="ActionScriptBracket/Brace">{</span>    
+
+    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">display</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DisplayObject</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">display</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DisplayObjectContainer</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">display</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">InteractiveObject</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">display</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">SimpleButton</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">display</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Sprite</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">display</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Stage</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">events</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Event</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">events</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">EventDispatcher</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">events</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">KeyboardEvent</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">events</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MouseEvent</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Point</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">utils</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Dictionary</span>;
+    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">org</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">papervision3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">log</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">PaperLogger</span>;
+    
+    <span class="ActionScriptASDoc">/**
+     * Dispatched when the virtual mouse state is updated.
+     * @eventType flash.events.Event
+     */</span>
+    <span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptMetadata">Event</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"update"</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">type</span><span class="ActionScriptOperator">=</span><span class="ActionScriptString">"flash.events.Event"</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">]</span>
+    
+    <span class="ActionScriptASDoc">/**
+     * Dispatched when the virtual mouse fires an
+     * Event.MOUSE_LEAVE event.
+     * @eventType flash.events.Event
+     */</span>
+    <span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptMetadata">Event</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"mouseLeave"</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">type</span><span class="ActionScriptOperator">=</span><span class="ActionScriptString">"flash.events.Event"</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">]</span>
+    
+    <span class="ActionScriptASDoc">/**
+     * Dispatched when the virtual mouse fires an
+     * MouseEvent.MOUSE_MOVE event.
+     * @eventType flash.events.MouseEvent
+     */</span>
+    <span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptMetadata">Event</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"mouseMove"</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">type</span><span class="ActionScriptOperator">=</span><span class="ActionScriptString">"flash.events.MouseEvent"</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">]</span>
+    
+    <span class="ActionScriptASDoc">/**
+     * Dispatched when the virtual mouse fires an
+     * MouseEvent.MOUSE_OUT event.
+     * @eventType flash.events.MouseEvent
+     */</span>
+    <span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptMetadata">Event</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"mouseOut"</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">type</span><span class="ActionScriptOperator">=</span><span class="ActionScriptString">"flash.events.MouseEvent"</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">]</span>
+    <span class="ActionScriptASDoc">/**
+     * Dispatched when the virtual mouse fires an
+     * MouseEvent.ROLL_OUT event.
+     * @eventType flash.events.MouseEvent
+     */</span>
+    <span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptMetadata">Event</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"rollOut"</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">type</span><span class="ActionScriptOperator">=</span><span class="ActionScriptString">"flash.events.MouseEvent"</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">]</span>
+    
+    <span class="ActionScriptASDoc">/**
+     * Dispatched when the virtual mouse fires an
+     * MouseEvent.MOUSE_OVER event.
+     * @eventType flash.events.MouseEvent
+     */</span>
+    <span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptMetadata">Event</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"mouseOver"</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">type</span><span class="ActionScriptOperator">=</span><span class="ActionScriptString">"flash.events.MouseEvent"</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">]</span>
+    
+    <span class="ActionScriptASDoc">/**
+     * Dispatched when the virtual mouse fires an
+     * MouseEvent.ROLL_OVER event.
+     * @eventType flash.events.MouseEvent
+     */</span>
+    <span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptMetadata">Event</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"rollOver"</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">type</span><span class="ActionScriptOperator">=</span><span class="ActionScriptString">"flash.events.MouseEvent"</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">]</span>
+    
+    <span class="ActionScriptASDoc">/**
+     * Dispatched when the virtual mouse fires an
+     * MouseEvent.MOUSE_DOWN event.
+     * @eventType flash.events.MouseEvent
+     */</span>
+    <span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptMetadata">Event</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"mouseDown"</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">type</span><span class="ActionScriptOperator">=</span><span class="ActionScriptString">"flash.events.MouseEvent"</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">]</span>
+    
+    <span class="ActionScriptASDoc">/**
+     * Dispatched when the virtual mouse fires an
+     * MouseEvent.MOUSE_UP event.
+     * @eventType flash.events.MouseEvent
+     */</span>
+    <span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptMetadata">Event</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"mouseUp"</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">type</span><span class="ActionScriptOperator">=</span><span class="ActionScriptString">"flash.events.MouseEvent"</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">]</span>
+    
+    <span class="ActionScriptASDoc">/**
+     * Dispatched when the virtual mouse fires an
+     * MouseEvent.CLICK event.
+     * @eventType flash.events.MouseEvent
+     */</span>
+    <span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptMetadata">Event</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"click"</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">type</span><span class="ActionScriptOperator">=</span><span class="ActionScriptString">"flash.events.MouseEvent"</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">]</span>
+    
+    <span class="ActionScriptASDoc">/**
+     * Dispatched when the virtual mouse fires an
+     * MouseEvent.DOUBLE_CLICK event.
+     * @eventType flash.events.MouseEvent
+     */</span>
+    <span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptMetadata">Event</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"doubleClick"</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">type</span><span class="ActionScriptOperator">=</span><span class="ActionScriptString">"flash.events.MouseEvent"</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">]</span>
+    
+    <span class="ActionScriptASDoc">/**
+     * The VirtualMouse class is used to create a programmatic 
+     * version of the users mouse that can be moved about the
+     * Flash player stage firing off mouse events of the display
+     * objects it interacts with.  This can allow you to simulate
+     * interaction with buttons and movie clips through ActionScript.
+     * &lt;br /&gt;
+     * Handled events include:
+     *         Event.MOUSE_LEAVE,
+     *         MouseEvent.MOUSE_MOVE,
+     *         MouseEvent.MOUSE_OUT,
+     *         MouseEvent.ROLL_OUT,
+     *         MouseEvent.MOUSE_OVER,
+     *         MouseEvent.ROLL_OVER,
+     *         MouseEvent.MOUSE_DOWN,
+     *         MouseEvent.MOUSE_UP.
+     *         MouseEvent.CLICK, and,
+     *         MouseEvent.DOUBLE_CLICK.
+     * Along with dispatching those events for their respective
+     * targets, the VirtualMouse instance will also dispatch the
+     * event on itself allowing to capture which events are being
+     * fired by the virtual mouse.  The last event fired can also
+     * be referenced in the lastEvent property.
+     * &lt;br /&gt;
+     * VirtualMouse mouse cannot:
+     *         activate states of SimpleButton instances, 
+     *         change object focus, 
+     *         handle mouseWheel related events,
+     *         change the system's cursor location, or 
+     *         spoof the location of the mouseX and mouseY properties
+     *             (which some components rely on).
+     */</span>
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">VirtualMouse</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">EventDispatcher</span> <span class="ActionScriptBracket/Brace">{</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptReserved">const</span> <span class="ActionScriptDefault_Text">UPDATE</span>:<span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptString">"update"</span>;
+        
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">altKey</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">ctrlKey</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">shiftKey</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">delta</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptComment">// mouseWheel unsupported
+</span>        
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_stage</span>:<span class="ActionScriptDefault_Text">Stage</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_container</span>:<span class="ActionScriptDefault_Text">Sprite</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">target</span>:<span class="ActionScriptDefault_Text">InteractiveObject</span>;
+        
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">location</span>:<span class="ActionScriptDefault_Text">Point</span>;
+        
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">isLocked</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">isDoubleClickEvent</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptReserved">static</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+        
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">disabledEvents</span>:<span class="ActionScriptDefault_Text">Object</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Object</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">ignoredInstances</span>:<span class="ActionScriptDefault_Text">Dictionary</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Dictionary</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">true</span><span class="ActionScriptBracket/Brace">)</span>;
+        
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_lastEvent</span>:<span class="ActionScriptDefault_Text">Event</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">lastMouseDown</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">updateMouseDown</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">lastLocation</span>:<span class="ActionScriptDefault_Text">Point</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">lastDownTarget</span>:<span class="ActionScriptDefault_Text">DisplayObject</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">lastWithinStage</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">true</span>;
+            
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_useNativeEvents</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">eventEvent</span>:<span class="ActionScriptDefault_Text">Class</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">VirtualMouseEvent</span>;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">mouseEventEvent</span>:<span class="ActionScriptDefault_Text">Class</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">VirtualMouseMouseEvent</span>;
+        
+        
+        
+        <span class="ActionScriptASDoc">/**
+         * A reference to the Stage instance. This
+         * reference needs to be passed to the 
+         * VirtualMouse instance either in its constructor
+         * or through assigning it's stage property.
+         * Without a valid reference to the stage, the
+         * virtual mouse will not function.
+         * @see VirtualMouse()
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">get</span> <span class="ActionScriptDefault_Text">stage</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Stage</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">_stage</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">set</span> <span class="ActionScriptDefault_Text">stage</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">s</span>:<span class="ActionScriptDefault_Text">Stage</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">hadStage</span>:<span class="ActionScriptDefault_Text">Boolean</span>;
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_stage</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">hadStage</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">true</span>;
+                <span class="ActionScriptDefault_Text">_stage</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">removeEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">KeyboardEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">KEY_DOWN</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">keyHandler</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">_stage</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">removeEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">KeyboardEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">KEY_UP</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">keyHandler</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span><span class="ActionScriptReserved">else</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">hadStage</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptDefault_Text">_stage</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">s</span>;
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_stage</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">_stage</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">addEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">KeyboardEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">KEY_DOWN</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">keyHandler</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">_stage</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">addEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">KeyboardEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">KEY_UP</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">keyHandler</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">target</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">_stage</span>;
+                <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">hadStage</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptDefault_Text">update</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+        * 
+        * @param    value Sprite container you want VirtualMouse to use with its testing of sub containers
+        * @return
+        */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">set</span> <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">value</span>:<span class="ActionScriptDefault_Text">Sprite</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">_container</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">value</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">get</span> <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Sprite</span> <span class="ActionScriptBracket/Brace">{</span> <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">_container</span>; <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * The last event dispatched by the VirtualMouse
+         * instance.  This can be useful for preventing
+         * event recursion if performing VirtualMouse
+         * operations within MouseEvent handlers.
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">get</span> <span class="ActionScriptDefault_Text">lastEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Event</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">_lastEvent</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * True if the virtual mouse is being
+         * pressed, false if not.  The mouse is
+         * down for the virtual mouse if press()
+         * was called.
+         * @see press()
+         * @see release()
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">get</span> <span class="ActionScriptDefault_Text">mouseIsDown</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * The x location of the virtual mouse. If you are
+         * setting both the x and y properties of the
+         * virtual mouse at the same time, you would probably
+         * want to lock the VirtualMouse instance to prevent
+         * additional events from firing.
+         * @see lock
+         * @see unlock
+         * @see y
+         * @see setLocation()
+         * @see getLocation()
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">get</span> <span class="ActionScriptDefault_Text">x</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">location</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">set</span> <span class="ActionScriptDefault_Text">x</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">n</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">location</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">n</span>;
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">isLocked</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptDefault_Text">update</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * The y location of the virtual mouse.  If you are
+         * setting both the x and y properties of the
+         * virtual mouse at the same time, you would probably
+         * want to lock the VirtualMouse instance to prevent
+         * additional events from firing.
+         * @see lock
+         * @see unlock
+         * @see x
+         * @see setLocation()
+         * @see getLocation()
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">get</span> <span class="ActionScriptDefault_Text">y</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">location</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">set</span> <span class="ActionScriptDefault_Text">y</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">n</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">location</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">n</span>;
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">isLocked</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptDefault_Text">update</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Determines if the events dispatched by the
+         * VirtualMouse instance are IVirualMouseEvent
+         * Events (wrapping Event and MouseEvent) or events
+         * of the native Event and MouseEvent type. When using
+         * non-native events, you can check to see if the
+         * events originated from VirtualMouse by seeing if
+         * the events are of the type IVirualMouseEvent.
+         * @see lastEvent
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">get</span> <span class="ActionScriptDefault_Text">useNativeEvents</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">_useNativeEvents</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">set</span> <span class="ActionScriptDefault_Text">useNativeEvents</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">b</span>:<span class="ActionScriptDefault_Text">Boolean</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">b</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptDefault_Text">_useNativeEvents</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptReserved">return</span>;
+            <span class="ActionScriptDefault_Text">_useNativeEvents</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">b</span>;
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_useNativeEvents</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">eventEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">VirtualMouseEvent</span>;
+                <span class="ActionScriptDefault_Text">mouseEventEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">VirtualMouseMouseEvent</span>;
+            <span class="ActionScriptBracket/Brace">}</span><span class="ActionScriptReserved">else</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">eventEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">Event</span>;
+                <span class="ActionScriptDefault_Text">mouseEventEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">MouseEvent</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/** 
+         * Initializes a new VirtualMouse instance. 
+         * @param stage A reference to the stage instance.
+         * @param startX The initial x location of
+         *         the virtual mouse.
+         * @param startY The initial y location of
+         *         the virtual mouse.
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">VirtualMouse</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">stage</span>:<span class="ActionScriptDefault_Text">Stage</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">container</span>:<span class="ActionScriptDefault_Text">Sprite</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">startX</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 0<span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">startY</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 0<span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">stage</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">stage</span>;
+            <span class="ActionScriptReserved">this</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">container</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">container</span>;
+            <span class="ActionScriptDefault_Text">location</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Point</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">startX</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">startY</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">lastLocation</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">location</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">clone</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">addEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">UPDATE</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">handleUpdate</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">update</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Returns the location (x and y) of the current
+         * VirtualMouse instance. The location of the
+         * virtual mouse is based in the global
+         * coordinate space.
+         * @return A Point instance representing the 
+         *         location of the virtual mouse in
+         *         global coordinate space.
+         * @see x
+         * @see y
+         * @see setLocation()
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">getLocation</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Point</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">location</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">clone</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Sets the location (x and y) of the current
+         * VirtualMouse instance.  There are two ways to
+         * call setLocation, either passing in a single
+         * Point instance, or by passing in two Number
+         * instances representing x and y coordinates.
+         * The location of the virtual mouse is based in
+         * the global coordinate space.
+         * @param a A Point instance or x Number value.
+         * @param b A y Number value if a is a Number.
+         * @see x
+         * @see y
+         * @see getLocation()
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">setLocation</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">a</span>:<span class="ActionScriptOperator">*</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">b</span>:<span class="ActionScriptOperator">*</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> 
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptComment">//log.debug("VM setLocation", a, b);
+</span>            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">a</span> <span class="ActionScriptReserved">is</span> <span class="ActionScriptDefault_Text">Point</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">loc</span>:<span class="ActionScriptDefault_Text">Point</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">a</span> <span class="ActionScriptReserved">as</span> <span class="ActionScriptDefault_Text">Point</span>;
+                <span class="ActionScriptDefault_Text">location</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">loc</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span>;
+                <span class="ActionScriptDefault_Text">location</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">loc</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span>;
+            <span class="ActionScriptBracket/Brace">}</span><span class="ActionScriptReserved">else</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">location</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">a</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">location</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">b</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">isLocked</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptDefault_Text">update</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Locks the current VirtualMouse instance
+         * preventing updates from being made as 
+         * properties change within the instance.
+         * To release and allow an update, call unlock().
+         * @see lock()
+         * @see update()
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">lock</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">isLocked</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">true</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Unlocks the current VirtualMouse instance
+         * allowing updates to be made for the
+         * dispatching of virtual mouse events. After
+         * unlocking the instance, it will update and
+         * additional calls to press(), release(), or
+         * changing the location of the virtual mouse
+         * will also invoke updates.
+         * @see lock()
+         * @see update()
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">unlock</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">isLocked</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+            <span class="ActionScriptDefault_Text">update</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Allows you to disable an event by type
+         * preventing the virtual mouse from 
+         * dispatching that event during an update.
+         * @param type The type for the event to
+         *         disable, e.g. MouseEvent.CLICK
+         * @see enableEvent()
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">disableEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">type</span>:<span class="ActionScriptDefault_Text">String</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">disabledEvents</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">type</span><span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">true</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Re-enables an event disabled with
+         * disableEvent.
+         * @param type The type for the event to
+         *         enable, e.g. MouseEvent.CLICK
+         * @see disableEvent()
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">enableEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">type</span>:<span class="ActionScriptDefault_Text">String</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">type</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">disabledEvents</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptReserved">delete</span> <span class="ActionScriptDefault_Text">disabledEvents</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">type</span><span class="ActionScriptBracket/Brace">]</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Ignores a display object preventing that
+         * object from recieving events from the
+         * virtual mouse.  This is useful for instances
+         * used for cursors which may always be under
+         * the virtual mouse's location.
+         * @param instance A reference to the
+         *         DisplayObject instance to ignore.
+         * @see unignore()
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">ignore</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">instance</span>:<span class="ActionScriptDefault_Text">DisplayObject</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">ignoredInstances</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">instance</span><span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">true</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Removes an instance from the ignore list
+         * defined by ignore().  When an ingored
+         * object is passed into unignore(), it will
+         * be able to receive events from the virtual
+         * mouse.
+         * @param instance A reference to the
+         *         DisplayObject instance to unignore.
+         * @see ignore()
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">unignore</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">instance</span>:<span class="ActionScriptDefault_Text">DisplayObject</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">instance</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">ignoredInstances</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptReserved">delete</span> <span class="ActionScriptDefault_Text">ignoredInstances</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">instance</span><span class="ActionScriptBracket/Brace">]</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Simulates the pressing of the left
+         * mouse button. To release the mouse
+         * button, use release().
+         * @see release()
+         * @see click()
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">press</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptComment">//if (_mouseIsDown) return;
+</span>            <span class="ActionScriptDefault_Text">updateMouseDown</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">true</span>;
+            <span class="ActionScriptDefault_Text">_mouseIsDown</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">true</span>;
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">isLocked</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptDefault_Text">update</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Simulates the release of the left
+         * mouse button.  This method has no
+         * effect unless press() was called first.
+         * @see press()
+         * @see click()
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">release</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptComment">//if (!_mouseIsDown) return;
+</span>            <span class="ActionScriptDefault_Text">updateMouseDown</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">true</span>;
+            <span class="ActionScriptDefault_Text">_mouseIsDown</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">isLocked</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptDefault_Text">update</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Simulates a click of the left
+         * mouse button (press and release)
+         * @see press()
+         * @see release()
+         * @see click()
+         * @see doubleClick()
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">click</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">press</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">release</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Simulates a double-click of the left
+         * mouse button (press and release twice).
+         * Calling this command is the only way to
+         * simulate a double-click for the virtual
+         * mouse.  Calling press() and release() or
+         * click() is rapid succession will not
+         * invoke a double-click event. The double-click
+         * event will also only fire for an instance
+         * if it's doubleClickEnabled property is
+         * set to true.
+         * @see click()
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">doubleClick</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptComment">// if locked, doubleClick will
+</span>            <span class="ActionScriptComment">// not fire but the mouse will 
+</span>            <span class="ActionScriptComment">// be released if not already
+</span>            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">isLocked</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">release</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span><span class="ActionScriptReserved">else</span><span class="ActionScriptBracket/Brace">{</span>
+
+                <span class="ActionScriptComment">// call update with a click, press, then release
+</span>                <span class="ActionScriptComment">// and double-click notification for release
+</span>                <span class="ActionScriptDefault_Text">click</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">press</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">isDoubleClickEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">true</span>;
+                <span class="ActionScriptDefault_Text">release</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">isDoubleClickEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptComment">/*Added by Jim Kremens kremens@gmail.com 08/16/07 */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">exitContainer</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">container</span> <span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptReserved">return</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">targetLocal</span>:<span class="ActionScriptDefault_Text">Point</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">target</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">globalToLocal</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">location</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptComment">//log.debug("Targetlocal", target != container);
+</span>            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">disabledEvents</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MOUSE_OUT</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">_lastEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">mouseEventEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MOUSE_OUT</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">true</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ctrlKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">shiftKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">delta</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">mouseEventEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MOUSE_OUT</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">true</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ctrlKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">shiftKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">delta</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">mouseEventEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MOUSE_OUT</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">true</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ctrlKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">shiftKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">delta</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">disabledEvents</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ROLL_OUT</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span> <span class="ActionScriptComment">// rolls do not propagate
+</span>                <span class="ActionScriptDefault_Text">_lastEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">mouseEventEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ROLL_OUT</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ctrlKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">shiftKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">delta</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">mouseEventEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ROLL_OUT</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ctrlKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">shiftKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">delta</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">mouseEventEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ROLL_OUT</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ctrlKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">shiftKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">delta</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">target</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">disabledEvents</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MOUSE_OUT</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptDefault_Text">_lastEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">mouseEventEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MOUSE_OUT</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">true</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ctrlKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">shiftKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">delta</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">target</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">mouseEventEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MOUSE_OUT</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">true</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ctrlKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">shiftKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">delta</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">mouseEventEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MOUSE_OUT</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">true</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ctrlKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">shiftKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">delta</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+                <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">disabledEvents</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ROLL_OUT</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span> <span class="ActionScriptComment">// rolls do not propagate
+</span>                    <span class="ActionScriptDefault_Text">_lastEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">mouseEventEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ROLL_OUT</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ctrlKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">shiftKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">delta</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">target</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">mouseEventEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ROLL_OUT</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ctrlKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">shiftKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">delta</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">mouseEventEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ROLL_OUT</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ctrlKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">shiftKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">delta</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptComment">//reset the target to the stage, which is the value it starts at.
+</span>            <span class="ActionScriptDefault_Text">target</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">_stage</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptASDoc">/**
+         * Updates the VirtualMouse instance's state
+         * to reflect a change in the virtual mouse.
+         * Within this method all events will be dispatched.
+         * update() is called any time a VirtualMouse
+         * property is changed unless lock() was used to
+         * lock the instance.  update() will then not be
+         * called until unlock() is used to unlock
+         * the instance. Typically you would never call
+         * update() directly; it is called automatically
+         * by the VirtualMouse class. Calling update()
+         * manually will override lock(). Whenever update()
+         * is called, the UPDATE event is dispatched.
+         * @see lock()
+         * @see unlock()
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">update</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptComment">// dispatch an update event indicating that 
+</span>            <span class="ActionScriptComment">// an update has occured
+</span>            <span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Event</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">UPDATE</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">handleUpdate</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">event</span>:<span class="ActionScriptDefault_Text">Event</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> 
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">container</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptReserved">return</span>;
+                
+            <span class="ActionScriptComment">// go through each objectsUnderPoint checking:
+</span>            <span class="ActionScriptComment">//         1) is not ignored
+</span>            <span class="ActionScriptComment">//        2) is InteractiveObject
+</span>            <span class="ActionScriptComment">//        3) mouseEnabled
+</span>            <span class="ActionScriptComment">//         4) all parents have mouseChildren
+</span>            <span class="ActionScriptComment">// if not interactive object, defer interaction to next object in list
+</span>            <span class="ActionScriptComment">// if is interactive and enabled, give interaction and ignore rest
+</span>            
+            <span class="ActionScriptComment">// var p:Point = CoordinateTools.localToLocal(container, stage, location);
+</span>            <span class="ActionScriptComment">//var objectsUnderPoint:Array = container.getObjectsUnderPoint(p); 
+</span>            
+            <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">scrollRect</span> <span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">PaperLogger</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">warning</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"The container that virtualMouse is trying to test against has a scrollRect defined, and may cause an issue with finding objects under a defined point.  Use MovieMaterial.rect to set a rectangle area instead"</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">originalPoint</span>:<span class="ActionScriptDefault_Text">Point</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Point</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">originalPoint</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span>;
+            <span class="ActionScriptDefault_Text">originalPoint</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span>;
+            <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span> <span class="ActionScriptOperator">=</span> 0;
+            
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">objectsUnderPoint</span>:<span class="ActionScriptDefault_Text">Array</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">getObjectsUnderPoint</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">location</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">originalPoint</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span>;
+            <span class="ActionScriptDefault_Text">container</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">originalPoint</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span>;
+            
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">currentTarget</span>:<span class="ActionScriptDefault_Text">InteractiveObject</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">currentParent</span>:<span class="ActionScriptDefault_Text">DisplayObject</span>;
+            
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span>:<span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">objectsUnderPoint</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">length</span>;
+            
+            <span class="ActionScriptReserved">while</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">--</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">currentParent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">objectsUnderPoint</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>;
+                
+                <span class="ActionScriptComment">// go through parent hierarchy
+</span>                <span class="ActionScriptReserved">while</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">currentParent</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                    
+                    <span class="ActionScriptComment">// don't use ignored instances as the target
+</span>                    <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">ignoredInstances</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">currentParent</span><span class="ActionScriptBracket/Brace">]</span>
+                    <span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                        <span class="ActionScriptDefault_Text">currentTarget</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+                        <span class="ActionScriptReserved">break</span>;
+                    <span class="ActionScriptBracket/Brace">}</span>
+                    
+                    <span class="ActionScriptComment">// invalid target if in a SimpleButton
+</span>                    <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">currentTarget</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">currentParent</span> <span class="ActionScriptReserved">is</span> <span class="ActionScriptDefault_Text">SimpleButton</span><span class="ActionScriptBracket/Brace">)</span> 
+                    <span class="ActionScriptBracket/Brace">{</span>
+                        <span class="ActionScriptComment">//log.debug("found SimpleButton - setting currentTarget to null");
+</span>                        <span class="ActionScriptDefault_Text">currentTarget</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+                        
+                    <span class="ActionScriptComment">// invalid target if a parent has a
+</span>                    <span class="ActionScriptComment">// false mouseChildren
+</span>                    <span class="ActionScriptBracket/Brace">}</span> <span class="ActionScriptReserved">else</span> <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">currentTarget</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">DisplayObjectContainer</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">currentParent</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">mouseChildren</span><span class="ActionScriptBracket/Brace">)</span> 
+                    <span class="ActionScriptBracket/Brace">{</span>
+                        <span class="ActionScriptComment">//log.debug("parent false mouseChildren - setting currentTarget to null");
+</span>                        <span class="ActionScriptDefault_Text">currentTarget</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+                    <span class="ActionScriptBracket/Brace">}</span>
+                    
+                    <span class="ActionScriptComment">// define target if an InteractiveObject
+</span>                    <span class="ActionScriptComment">// and mouseEnabled is true
+</span>                    <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">currentTarget</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">currentParent</span> <span class="ActionScriptReserved">is</span> <span class="ActionScriptDefault_Text">InteractiveObject</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">InteractiveObject</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">currentParent</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">mouseEnabled</span><span class="ActionScriptBracket/Brace">)</span> 
+                    <span class="ActionScriptBracket/Brace">{</span>
+                        <span class="ActionScriptComment">//log.debug("found InteractiveObject &amp;&amp; mouseEnabled = true - setting currentTarget");
+</span>                        <span class="ActionScriptDefault_Text">currentTarget</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">InteractiveObject</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">currentParent</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptBracket/Brace">}</span>
+                    
+                    <span class="ActionScriptComment">// next parent in hierarchy
+</span>                    <span class="ActionScriptDefault_Text">currentParent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">currentParent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">parent</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+                
+                <span class="ActionScriptComment">// if a currentTarget was found
+</span>                <span class="ActionScriptComment">// ignore all other objectsUnderPoint
+</span>                <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">currentTarget</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptReserved">break</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            
+            
+            <span class="ActionScriptComment">// if a currentTarget was not found
+</span>            <span class="ActionScriptComment">// the currentTarget is the stage
+</span>            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">currentTarget</span><span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptComment">//trace("no CurrentTarget", container.hitTestPoint(location.x, location.y));
+</span>                <span class="ActionScriptDefault_Text">currentTarget</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">container</span>;
+                <span class="ActionScriptComment">//currentTarget = _stage;
+</span>                <span class="ActionScriptComment">//log.debug("no new target found, using stage");
+</span>            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptComment">// get local coordinate locations
+</span>            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">targetLocal</span>:<span class="ActionScriptDefault_Text">Point</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">target</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">globalToLocal</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">location</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">currentTargetLocal</span>:<span class="ActionScriptDefault_Text">Point</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">currentTarget</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">globalToLocal</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">location</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            
+            <span class="ActionScriptComment">// move event
+</span>            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">lastLocation</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptDefault_Text">location</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">||</span> <span class="ActionScriptDefault_Text">lastLocation</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptDefault_Text">location</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptBracket/Brace">)</span> 
+            <span class="ActionScriptBracket/Brace">{</span>                
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">withinStage</span>:<span class="ActionScriptDefault_Text">Boolean</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+                <span class="ActionScriptReserved">if</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">stage</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptDefault_Text">withinStage</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">location</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">&gt;=</span> 0 <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">location</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span> <span class="ActionScriptOperator">&gt;=</span> 0 <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">location</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span> <span class="ActionScriptOperator">&lt;=</span> <span class="ActionScriptDefault_Text">stage</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">stageWidth</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">location</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span> <span class="ActionScriptOperator">&lt;=</span> <span class="ActionScriptDefault_Text">stage</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">stageHeight</span><span class="ActionScriptBracket/Brace">)</span>;
+                
+                <span class="ActionScriptComment">// mouse leave if left stage
+</span>                <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">withinStage</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">lastWithinStage</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">disabledEvents</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">Event</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MOUSE_LEAVE</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptDefault_Text">_lastEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">eventEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">Event</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MOUSE_LEAVE</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">stage</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+                
+                <span class="ActionScriptComment">// only mouse move if within stage
+</span>                <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">withinStage</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">disabledEvents</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MOUSE_MOVE</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptDefault_Text">_lastEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">mouseEventEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MOUSE_MOVE</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">true</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">currentTargetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">currentTargetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">currentTarget</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ctrlKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">shiftKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">delta</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">currentTarget</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+                
+                <span class="ActionScriptComment">// remember if within stage
+</span>                <span class="ActionScriptDefault_Text">lastWithinStage</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">withinStage</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptComment">// roll/mouse (out and over) events 
+</span>            
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">currentTarget</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptDefault_Text">target</span><span class="ActionScriptBracket/Brace">)</span> 
+            <span class="ActionScriptBracket/Brace">{</span>    
+                <span class="ActionScriptComment">// off of last target
+</span>                <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">disabledEvents</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MOUSE_OUT</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptDefault_Text">_lastEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">mouseEventEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MOUSE_OUT</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">true</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">currentTarget</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ctrlKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">shiftKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">delta</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">target</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+                <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">disabledEvents</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ROLL_OUT</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span> <span class="ActionScriptComment">// rolls do not propagate
+</span>                    <span class="ActionScriptDefault_Text">_lastEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">mouseEventEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ROLL_OUT</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">targetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">currentTarget</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ctrlKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">shiftKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">delta</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">target</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+                
+                <span class="ActionScriptComment">// on to current target
+</span>                <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">disabledEvents</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MOUSE_OVER</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptComment">//log.debug("*** MOUSEOVER****");
+</span>                    <span class="ActionScriptDefault_Text">_lastEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">mouseEventEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MOUSE_OVER</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">true</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">currentTargetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">currentTargetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">target</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ctrlKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">shiftKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">delta</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">currentTarget</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+                <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">disabledEvents</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ROLL_OVER</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span> <span class="ActionScriptComment">// rolls do not propagate
+</span>                    <span class="ActionScriptComment">//log.debug("*** ROLLOVER****");
+</span>                    <span class="ActionScriptDefault_Text">_lastEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">mouseEventEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ROLL_OVER</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">currentTargetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">currentTargetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">target</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ctrlKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">shiftKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">delta</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">currentTarget</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            
+            
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptComment">// click/up/down events
+</span>            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">updateMouseDown</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_mouseIsDown</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                    
+                    <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">disabledEvents</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MOUSE_DOWN</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                        <span class="ActionScriptDefault_Text">_lastEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">mouseEventEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MOUSE_DOWN</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">true</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">currentTargetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">currentTargetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">currentTarget</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ctrlKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">shiftKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">delta</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptDefault_Text">currentTarget</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptBracket/Brace">}</span>
+                    
+                    <span class="ActionScriptComment">// remember last down
+</span>                    <span class="ActionScriptDefault_Text">lastDownTarget</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">currentTarget</span>;
+                    <span class="ActionScriptDefault_Text">updateMouseDown</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+                <span class="ActionScriptComment">// mouse is up
+</span>                <span class="ActionScriptBracket/Brace">}</span><span class="ActionScriptReserved">else</span><span class="ActionScriptBracket/Brace">{</span>
+                    <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">disabledEvents</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MOUSE_UP</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptBracket/Brace">{</span>
+                        <span class="ActionScriptDefault_Text">_lastEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">mouseEventEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">MOUSE_UP</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">true</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">currentTargetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">currentTargetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">currentTarget</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ctrlKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">shiftKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">delta</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptDefault_Text">currentTarget</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptBracket/Brace">}</span>
+                    
+                    <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">disabledEvents</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">CLICK</span><span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">currentTarget</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptDefault_Text">lastDownTarget</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                        <span class="ActionScriptDefault_Text">_lastEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">mouseEventEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">CLICK</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">true</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">currentTargetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">currentTargetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">currentTarget</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ctrlKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">shiftKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">delta</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptDefault_Text">currentTarget</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+                        <span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+                    <span class="ActionScriptBracket/Brace">}</span>
+                    
+                    <span class="ActionScriptComment">// clear last down
+</span>                    <span class="ActionScriptDefault_Text">lastDownTarget</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+                    <span class="ActionScriptDefault_Text">updateMouseDown</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">false</span>;
+                <span class="ActionScriptBracket/Brace">}</span>
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptComment">// explicit call to doubleClick()
+</span>            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">isDoubleClickEvent</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptOperator">!</span><span class="ActionScriptDefault_Text">disabledEvents</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DOUBLE_CLICK</span><span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptDefault_Text">currentTarget</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">doubleClickEnabled</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptDefault_Text">_lastEvent</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">mouseEventEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">DOUBLE_CLICK</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">true</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptReserved">false</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">currentTargetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">currentTargetLocal</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">currentTarget</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">ctrlKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">altKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">shiftKey</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">delta</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">currentTarget</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+                <span class="ActionScriptDefault_Text">dispatchEvent</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">_lastEvent</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+            
+            <span class="ActionScriptComment">// remember last values
+</span>            <span class="ActionScriptDefault_Text">lastLocation</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">location</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">clone</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">lastMouseDown</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">_mouseIsDown</span>;
+            <span class="ActionScriptDefault_Text">target</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">currentTarget</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">keyHandler</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">event</span>:<span class="ActionScriptDefault_Text">KeyboardEvent</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptComment">// update properties used in MouseEvents
+</span>            <span class="ActionScriptDefault_Text">altKey</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">event</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">altKey</span>;
+            <span class="ActionScriptDefault_Text">ctrlKey</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">event</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">ctrlKey</span>;
+            <span class="ActionScriptDefault_Text">shiftKey</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">event</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">shiftKey</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptBracket/Brace">}</span>
+<span class="ActionScriptBracket/Brace">}</span></pre></body>
+</html>
