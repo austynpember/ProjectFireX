@@ -1,5 +1,7 @@
 Project Fire X (PFX) is the development name for a futuristic space scrolling-shooter game built for Flash.
 
+I created this from scratch during my Co-ops with Hanson Inc. during 2011-2013
+
 PFX runs in Adobe Flash Player, either through a web version or an AIR application.
 The game itself is housed inside of a Flex framework, which loads/interacts with the GameController.swf.
 This framework enables the end user to flip through modules using menus or procedural navigation.
